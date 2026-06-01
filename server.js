@@ -365,6 +365,15 @@ app.post('/api/admin/marquee-items', authMiddleware, async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+app.put('/api/admin/marquee-items/reorder', authMiddleware, async (req, res) => {
+  try {
+    const { ids } = req.body;
+    if (!Array.isArray(ids)) return res.status(400).json({ error: 'ids array required' });
+    await db.batch(ids.map((id, i) => ({ sql: 'UPDATE marquee_items SET sort_order = ? WHERE id = ?', args: [i, id] })), 'write');
+    res.json({ success: true });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
 app.put('/api/admin/marquee-items/:id', authMiddleware, async (req, res) => {
   try {
     const { text, color } = req.body;
@@ -377,15 +386,6 @@ app.put('/api/admin/marquee-items/:id', authMiddleware, async (req, res) => {
 app.delete('/api/admin/marquee-items/:id', authMiddleware, async (req, res) => {
   try { await run('DELETE FROM marquee_items WHERE id = ?', [req.params.id]); res.json({ success: true }); }
   catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-app.put('/api/admin/marquee-items/reorder', authMiddleware, async (req, res) => {
-  try {
-    const { ids } = req.body;
-    if (!Array.isArray(ids)) return res.status(400).json({ error: 'ids array required' });
-    await db.batch(ids.map((id, i) => ({ sql: 'UPDATE marquee_items SET sort_order = ? WHERE id = ?', args: [i, id] })), 'write');
-    res.json({ success: true });
-  } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 // ═══════════════════════════════════════════════════════════════════
@@ -410,6 +410,15 @@ app.post('/api/admin/slider-images', authMiddleware, upload.single('image'), asy
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+app.put('/api/admin/slider-images/reorder', authMiddleware, async (req, res) => {
+  try {
+    const { ids } = req.body;
+    if (!Array.isArray(ids)) return res.status(400).json({ error: 'ids array required' });
+    await db.batch(ids.map((id, i) => ({ sql: 'UPDATE slider_images SET sort_order = ? WHERE id = ?', args: [i, id] })), 'write');
+    res.json({ success: true });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
 app.delete('/api/admin/slider-images/:id', authMiddleware, async (req, res) => {
   try {
     const img = await getOne('SELECT filename FROM slider_images WHERE id = ?', [req.params.id]);
@@ -417,15 +426,6 @@ app.delete('/api/admin/slider-images/:id', authMiddleware, async (req, res) => {
       await run('DELETE FROM file_uploads WHERE filename = ?', [img.filename]);
       await run('DELETE FROM slider_images WHERE id = ?', [req.params.id]);
     }
-    res.json({ success: true });
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-app.put('/api/admin/slider-images/reorder', authMiddleware, async (req, res) => {
-  try {
-    const { ids } = req.body;
-    if (!Array.isArray(ids)) return res.status(400).json({ error: 'ids array required' });
-    await db.batch(ids.map((id, i) => ({ sql: 'UPDATE slider_images SET sort_order = ? WHERE id = ?', args: [i, id] })), 'write');
     res.json({ success: true });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
@@ -471,6 +471,14 @@ app.post('/api/admin/numbers', authMiddleware, async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+app.put('/api/admin/numbers/reorder', authMiddleware, async (req, res) => {
+  try {
+    const { ids } = req.body;
+    await db.batch(ids.map((id, i) => ({ sql: 'UPDATE whatsapp_numbers SET sort_order = ? WHERE id = ?', args: [i, id] })), 'write');
+    res.json({ success: true });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
 app.put('/api/admin/numbers/:id', authMiddleware, async (req, res) => {
   try {
     const { number, icon, title, description, badge, icon_bg } = req.body;
@@ -483,14 +491,6 @@ app.put('/api/admin/numbers/:id', authMiddleware, async (req, res) => {
 app.delete('/api/admin/numbers/:id', authMiddleware, async (req, res) => {
   try { await run('DELETE FROM whatsapp_numbers WHERE id = ?', [req.params.id]); res.json({ success: true }); }
   catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-app.put('/api/admin/numbers/reorder', authMiddleware, async (req, res) => {
-  try {
-    const { ids } = req.body;
-    await db.batch(ids.map((id, i) => ({ sql: 'UPDATE whatsapp_numbers SET sort_order = ? WHERE id = ?', args: [i, id] })), 'write');
-    res.json({ success: true });
-  } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 // ═══════════════════════════════════════════════════════════════════
@@ -521,6 +521,14 @@ app.post('/api/admin/payment-methods', authMiddleware, upload.single('image'), a
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+app.put('/api/admin/payment-methods/reorder', authMiddleware, async (req, res) => {
+  try {
+    const { ids } = req.body;
+    await db.batch(ids.map((id, i) => ({ sql: 'UPDATE payment_methods SET sort_order = ? WHERE id = ?', args: [i, id] })), 'write');
+    res.json({ success: true });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
 app.delete('/api/admin/payment-methods/:id', authMiddleware, async (req, res) => {
   try {
     const pm = await getOne('SELECT * FROM payment_methods WHERE id = ?', [req.params.id]);
@@ -528,14 +536,6 @@ app.delete('/api/admin/payment-methods/:id', authMiddleware, async (req, res) =>
       await run('DELETE FROM file_uploads WHERE filename = ?', [pm.filename]);
     }
     await run('DELETE FROM payment_methods WHERE id = ?', [req.params.id]);
-    res.json({ success: true });
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-app.put('/api/admin/payment-methods/reorder', authMiddleware, async (req, res) => {
-  try {
-    const { ids } = req.body;
-    await db.batch(ids.map((id, i) => ({ sql: 'UPDATE payment_methods SET sort_order = ? WHERE id = ?', args: [i, id] })), 'write');
     res.json({ success: true });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
@@ -560,6 +560,14 @@ app.post('/api/admin/footer-links', authMiddleware, async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+app.put('/api/admin/footer-links/reorder', authMiddleware, async (req, res) => {
+  try {
+    const { ids } = req.body;
+    await db.batch(ids.map((id, i) => ({ sql: 'UPDATE footer_links SET sort_order = ? WHERE id = ?', args: [i, id] })), 'write');
+    res.json({ success: true });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
 app.put('/api/admin/footer-links/:id', authMiddleware, async (req, res) => {
   try {
     const { icon, icon_bg, label, sub, url, is_emergency } = req.body;
@@ -572,14 +580,6 @@ app.put('/api/admin/footer-links/:id', authMiddleware, async (req, res) => {
 app.delete('/api/admin/footer-links/:id', authMiddleware, async (req, res) => {
   try { await run('DELETE FROM footer_links WHERE id = ?', [req.params.id]); res.json({ success: true }); }
   catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-app.put('/api/admin/footer-links/reorder', authMiddleware, async (req, res) => {
-  try {
-    const { ids } = req.body;
-    await db.batch(ids.map((id, i) => ({ sql: 'UPDATE footer_links SET sort_order = ? WHERE id = ?', args: [i, id] })), 'write');
-    res.json({ success: true });
-  } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 // ═══════════════════════════════════════════════════════════════════
@@ -601,6 +601,14 @@ app.post('/api/admin/services', authMiddleware, async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+app.put('/api/admin/services/reorder', authMiddleware, async (req, res) => {
+  try {
+    const { ids } = req.body;
+    await db.batch(ids.map((id, i) => ({ sql: 'UPDATE services SET sort_order = ? WHERE id = ?', args: [i, id] })), 'write');
+    res.json({ success: true });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
 app.put('/api/admin/services/:id', authMiddleware, async (req, res) => {
   try {
     const { title, description, icon } = req.body;
@@ -612,14 +620,6 @@ app.put('/api/admin/services/:id', authMiddleware, async (req, res) => {
 app.delete('/api/admin/services/:id', authMiddleware, async (req, res) => {
   try { await run('DELETE FROM services WHERE id = ?', [req.params.id]); res.json({ success: true }); }
   catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-app.put('/api/admin/services/reorder', authMiddleware, async (req, res) => {
-  try {
-    const { ids } = req.body;
-    await db.batch(ids.map((id, i) => ({ sql: 'UPDATE services SET sort_order = ? WHERE id = ?', args: [i, id] })), 'write');
-    res.json({ success: true });
-  } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 // ═══════════════════════════════════════════════════════════════════
