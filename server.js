@@ -481,9 +481,15 @@ app.put('/api/admin/numbers/reorder', authMiddleware, async (req, res) => {
 
 app.put('/api/admin/numbers/:id', authMiddleware, async (req, res) => {
   try {
+    const existing = await getOne('SELECT * FROM whatsapp_numbers WHERE id = ?', [req.params.id]);
+    if (!existing) return res.status(404).json({ error: 'Not found' });
     const { number, icon, title, description, badge, icon_bg } = req.body;
     await run('UPDATE whatsapp_numbers SET number=?, icon=?, title=?, description=?, badge=?, icon_bg=? WHERE id=?',
-      [number, icon, title, description, badge, icon_bg, req.params.id]);
+      [number || existing.number, icon || existing.icon, title || existing.title,
+       description !== undefined ? description : existing.description,
+       badge !== undefined ? badge : existing.badge,
+       icon_bg !== undefined ? icon_bg : existing.icon_bg,
+       req.params.id]);
     res.json({ success: true });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
@@ -570,9 +576,17 @@ app.put('/api/admin/footer-links/reorder', authMiddleware, async (req, res) => {
 
 app.put('/api/admin/footer-links/:id', authMiddleware, async (req, res) => {
   try {
+    const existing = await getOne('SELECT * FROM footer_links WHERE id = ?', [req.params.id]);
+    if (!existing) return res.status(404).json({ error: 'Not found' });
     const { icon, icon_bg, label, sub, url, is_emergency } = req.body;
     await run('UPDATE footer_links SET icon=?, icon_bg=?, label=?, sub=?, url=?, is_emergency=? WHERE id=?',
-      [icon, icon_bg, label, sub, url, is_emergency, req.params.id]);
+      [icon || existing.icon,
+       icon_bg !== undefined ? icon_bg : existing.icon_bg,
+       label || existing.label,
+       sub !== undefined ? sub : existing.sub,
+       url || existing.url,
+       is_emergency !== undefined ? is_emergency : existing.is_emergency,
+       req.params.id]);
     res.json({ success: true });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
