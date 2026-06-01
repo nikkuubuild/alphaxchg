@@ -270,6 +270,9 @@ app.get('/api/public/all', (req, res) => {
 
   data.footerLinks = db.prepare('SELECT icon, icon_bg, label, sub, url, is_emergency FROM footer_links ORDER BY sort_order').all();
 
+  const footerTheme = db.prepare("SELECT value FROM settings WHERE key = 'footer_theme'").get();
+  data.footerTheme = footerTheme ? footerTheme.value : 'neon-green';
+
   res.json(data);
 });
 
@@ -468,6 +471,23 @@ app.put('/api/admin/footer-links/reorder', authMiddleware, (req, res) => {
   const update = db.prepare('UPDATE footer_links SET sort_order = ? WHERE id = ?');
   const txn = db.transaction(() => ids.forEach((id, i) => update.run(i, id)));
   txn();
+  res.json({ success: true });
+});
+
+// ═════════════════════════════════════════════════════════════════════
+//  ADMIN — FOOTER THEME
+// ═════════════════════════════════════════════════════════════════════
+
+app.get('/api/admin/footer-theme', authMiddleware, (req, res) => {
+  const row = db.prepare("SELECT value FROM settings WHERE key = 'footer_theme'").get();
+  res.json({ theme: row ? row.value : 'neon-green' });
+});
+
+app.put('/api/admin/footer-theme', authMiddleware, (req, res) => {
+  const { theme } = req.body;
+  const valid = ['neon-green', 'cyber-purple', 'ocean-blue', 'sunset-fire', 'gold-premium'];
+  if (!valid.includes(theme)) return res.status(400).json({ error: 'Invalid theme' });
+  upsertSetting.run('footer_theme', theme);
   res.json({ success: true });
 });
 

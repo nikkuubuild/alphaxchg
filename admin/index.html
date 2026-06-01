@@ -606,9 +606,34 @@ async function deletePayment(id) {
 async function renderFooter() {
   const el = document.getElementById('tabContent');
   try {
-    const r = await api('/api/admin/footer-links');
+    const [r, tr] = await Promise.all([api('/api/admin/footer-links'), api('/api/admin/footer-theme')]);
     const items = await r.json();
+    const themeData = await tr.json();
+    const currentTheme = themeData.theme || 'neon-green';
+    const themes = [
+      { id: 'neon-green', label: 'Neon Green', color: '#8BC34A', bg: 'rgba(139,195,74,0.12)' },
+      { id: 'cyber-purple', label: 'Cyber Purple', color: '#A855F7', bg: 'rgba(168,85,247,0.12)' },
+      { id: 'ocean-blue', label: 'Ocean Blue', color: '#3B82F6', bg: 'rgba(59,130,246,0.12)' },
+      { id: 'sunset-fire', label: 'Sunset Fire', color: '#F97316', bg: 'rgba(249,115,22,0.12)' },
+      { id: 'gold-premium', label: 'Gold Premium', color: '#EAB308', bg: 'rgba(234,179,8,0.12)' }
+    ];
     el.innerHTML =
+      '<div class="section-header"><h3>Footer Theme</h3></div>' +
+      '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px">' +
+      themes.map(t =>
+        '<button onclick="setFooterTheme(\'' + t.id + '\')" style="' +
+          'padding:12px 18px;border-radius:10px;cursor:pointer;font-family:Inter,sans-serif;font-size:12px;font-weight:700;transition:all 0.2s;' +
+          'background:' + (currentTheme === t.id ? t.bg : 'rgba(255,255,255,0.02)') + ';' +
+          'border:2px solid ' + (currentTheme === t.id ? t.color : 'rgba(255,255,255,0.06)') + ';' +
+          'color:' + (currentTheme === t.id ? t.color : 'rgba(255,255,255,0.3)') + ';' +
+          'box-shadow:' + (currentTheme === t.id ? '0 0 15px ' + t.bg : 'none') +
+        '">' +
+          '<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:' + t.color + ';margin-right:8px;vertical-align:middle"></span>' +
+          t.label +
+          (currentTheme === t.id ? ' ✓' : '') +
+        '</button>'
+      ).join('') +
+      '</div>' +
       '<div class="section-header"><h3>Footer Links <span>(' + items.length + ')</span></h3><button class="btn-add" onclick="addFooterLink()">+ Add Link</button></div>' +
       '<div class="table-wrap"><table><thead><tr><th style="width:40px"></th><th>Label</th><th>URL</th><th>Type</th><th style="width:100px"></th></tr></thead><tbody>' +
       items.map((item, i) =>
@@ -687,6 +712,16 @@ async function deleteFooterLink(id) {
   if (!confirm('Delete this link?')) return;
   await api('/api/admin/footer-links/' + id, { method: 'DELETE' });
   toast('Deleted', 'success');
+  renderFooter();
+}
+
+// ═════════════════════════════════════════════════════════════════════
+//  FOOTER THEME
+// ═════════════════════════════════════════════════════════════════════
+
+async function setFooterTheme(theme) {
+  await api('/api/admin/footer-theme', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ theme }) });
+  toast('Footer theme updated to ' + theme.replace('-', ' '), 'success');
   renderFooter();
 }
 
