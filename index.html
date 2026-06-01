@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AlphaXchng — Premium ID Solutions</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;min-height:100vh;background:#030303;color:#fff;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 60% at 50% -20%,rgba(37,211,102,0.06),transparent);pointer-events:none;z-index:0}
+.page{width:100%;max-width:460px;margin:0 auto;padding:0 16px 24px;position:relative;z-index:1}
+
+/* ── Header ── */
+.header{display:flex;align-items:center;justify-content:space-between;padding:20px 0 16px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.logo-icon{width:36px;height:36px;background:linear-gradient(135deg,#25D366,#1a9e4e);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:#000;box-shadow:0 0 20px rgba(37,211,102,0.25)}
+.logo-text{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;letter-spacing:-0.5px;background:linear-gradient(135deg,#fff 60%,rgba(255,255,255,0.5));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.logo-text span{-webkit-text-fill-color:#25D366}
+.get-btn{background:linear-gradient(135deg,#25D366,#1a9e4e);color:#000;border:none;border-radius:10px;padding:10px 22px;font-size:13px;font-weight:700;font-family:'Inter',sans-serif;cursor:pointer;transition:all 0.3s;box-shadow:0 4px 15px rgba(37,211,102,0.2);position:relative;overflow:hidden}
+.get-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent,rgba(255,255,255,0.15));opacity:0;transition:opacity 0.3s}
+.get-btn:hover::before{opacity:1}
+.get-btn:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(37,211,102,0.35)}
+.get-btn:active{transform:translateY(0)}
+
+/* ── Status Bar ── */
+.status-bar{display:flex;align-items:center;gap:8px;margin-bottom:16px;padding:8px 14px;background:rgba(37,211,102,0.04);border:1px solid rgba(37,211,102,0.08);border-radius:20px;width:fit-content}
+.status-dot{width:7px;height:7px;background:#25D366;border-radius:50%;animation:pulseGlow 2s infinite;box-shadow:0 0 8px rgba(37,211,102,0.5)}
+.status-text{font-size:11px;font-weight:600;color:rgba(255,255,255,0.4);letter-spacing:0.3px}
+.status-text strong{color:rgba(37,211,102,0.8);font-weight:700}
+
+/* ── Top Marquee ── */
+.marquee-wrap{overflow:hidden;background:linear-gradient(135deg,rgba(20,20,20,0.9),rgba(10,10,10,0.9));border:1px solid rgba(255,255,255,0.04);border-radius:14px;padding:12px 0;margin-bottom:20px;position:relative;backdrop-filter:blur(10px)}
+.marquee-wrap::before,.marquee-wrap::after{content:'';position:absolute;top:0;bottom:0;width:40px;z-index:2;pointer-events:none}
+.marquee-wrap::before{left:0;background:linear-gradient(90deg,rgba(10,10,10,0.9),transparent)}
+.marquee-wrap::after{right:0;background:linear-gradient(270deg,rgba(10,10,10,0.9),transparent)}
+.marquee-inner{display:flex;gap:48px;animation:scrollLeft 30s linear infinite;width:max-content}
+.marquee-inner span{white-space:nowrap;font-size:11px;font-weight:500;color:rgba(255,255,255,0.3);letter-spacing:0.8px;text-transform:uppercase}
+.marquee-inner span .hl{color:#25D366;font-weight:700}
+.marquee-inner span .sep{color:rgba(255,255,255,0.08);margin:0 12px}
+
+/* ── Slider Section ── */
+.slider-section{margin-bottom:24px}
+.slider-frame{position:relative;display:flex;align-items:center;justify-content:center;padding:0 28px}
+
+/* Horizontal marquee bars */
+.marquee-h{margin:6px 0 8px;overflow:hidden;position:relative;height:18px}
+.marquee-h .track{display:flex;gap:32px;animation:scrollLeft 20s linear infinite;width:max-content;position:absolute;top:0;left:0}
+.marquee-h .track span{font-size:10px;font-weight:600;color:rgba(255,255,255,0.2);white-space:nowrap;letter-spacing:1.5px;text-transform:uppercase}
+.marquee-h .track span .hl{color:rgba(37,211,102,0.6);font-weight:700}
+.marquee-h .track span .dot{color:rgba(255,255,255,0.06)}
+
+.slider-border{position:relative;width:100%;aspect-ratio:1/1;max-width:380px;margin:0 auto}
+.slider-border::before{content:'';position:absolute;inset:-3px;border-radius:20px;background:linear-gradient(135deg,rgba(37,211,102,0.15),rgba(37,211,102,0.02),rgba(37,211,102,0.1));z-index:0;animation:borderGlow 4s ease-in-out infinite alternate}
+@keyframes borderGlow{0%{opacity:0.5}100%{opacity:1}}
+
+.slider-container{width:100%;height:100%;border-radius:16px;overflow:hidden;position:relative;background:#080808;border:1px solid rgba(255,255,255,0.04);z-index:1}
+.slider-container img{width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;opacity:0;transition:opacity 0.8s cubic-bezier(.22,1,.36,1),transform 1s cubic-bezier(.22,1,.36,1);transform:scale(1.05)}
+.slider-container img.active{opacity:1;transform:scale(1)}
+
+/* Slider dots */
+.slider-dots{display:flex;justify-content:center;gap:6px;margin-top:12px}
+.slider-dots .dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.1);cursor:pointer;transition:all 0.4s}
+.slider-dots .dot.active{width:20px;border-radius:3px;background:#25D366;box-shadow:0 0 10px rgba(37,211,102,0.3)}
+
+/* Side marquees */
+.marquee-v-wrap{position:absolute;width:100%;height:100%;top:0;left:0;pointer-events:none;z-index:2}
+.marquee-v-left,.marquee-v-right{position:absolute;top:0;width:24px;height:100%;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.marquee-v-left{left:-30px}
+.marquee-v-right{right:-30px}
+.marquee-v-track{display:flex;flex-direction:column;gap:28px;animation:scrollVertical 18s linear infinite;width:max-content}
+.marquee-v-track span{font-size:9px;font-weight:700;color:rgba(255,255,255,0.15);writing-mode:vertical-rl;text-orientation:mixed;letter-spacing:4px;white-space:nowrap;text-transform:uppercase;font-family:'Space Grotesk',sans-serif}
+.marquee-v-track span .hl{color:rgba(37,211,102,0.5);font-weight:700}
+
+@keyframes scrollLeft{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+@keyframes scrollVertical{0%{transform:translateY(0)}100%{transform:translateY(-50%)}}
+@keyframes pulseGlow{0%,100%{opacity:1;box-shadow:0 0 8px rgba(37,211,102,0.5)}50%{opacity:0.6;box-shadow:0 0 16px rgba(37,211,102,0.8)}}
+
+/* ── Section Headers ── */
+.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.section-head-left{display:flex;align-items:center;gap:10px}
+.section-badge{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,0.2);background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.04);border-radius:6px;padding:4px 10px}
+.section-title{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;color:#fff;letter-spacing:-0.3px}
+.section-title span{color:#25D366}
+.section-count{font-size:11px;font-weight:600;color:rgba(255,255,255,0.15);background:rgba(255,255,255,0.03);padding:4px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04)}
+
+/* ── Number Tabs ── */
+.tabs-card{background:linear-gradient(135deg,rgba(15,15,15,0.95),rgba(8,8,8,0.95));border:1px solid rgba(255,255,255,0.04);border-radius:18px;padding:18px;backdrop-filter:blur(10px)}
+.btn-grid{display:flex;flex-direction:column;gap:8px}
+.wa-btn{display:flex;align-items:center;gap:14px;padding:15px 16px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);background:rgba(255,255,255,0.02);cursor:pointer;transition:all 0.3s cubic-bezier(.22,1,.36,1);text-decoration:none;position:relative;overflow:hidden}
+.wa-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(37,211,102,0.03),transparent);opacity:0;transition:opacity 0.3s}
+.wa-btn:hover::before{opacity:1}
+.wa-btn:hover{border-color:rgba(37,211,102,0.15);transform:translateY(-1px);box-shadow:0 8px 25px rgba(0,0,0,0.3)}
+.wa-btn:active{transform:translateY(0) scale(0.99)}
+.wa-btn .badge{position:absolute;top:8px;right:8px;font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:rgba(37,211,102,0.5);background:rgba(37,211,102,0.06);padding:2px 8px;border-radius:4px;border:1px solid rgba(37,211,102,0.08)}
+.btn-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px;position:relative}
+.btn-icon::after{content:'';position:absolute;inset:0;border-radius:10px;border:1px solid rgba(255,255,255,0.04)}
+.btn-text{flex:1;text-align:left}
+.btn-title{font-size:14px;font-weight:700;color:rgba(255,255,255,0.9);display:block;letter-spacing:-0.2px;font-family:'Space Grotesk',sans-serif}
+.btn-desc{font-size:11px;color:rgba(255,255,255,0.25);font-weight:500;margin-top:2px;display:block}
+.btn-arrow{color:rgba(255,255,255,0.1);font-size:18px;transition:all 0.3s;font-weight:300;font-family:'Inter',sans-serif}
+.wa-btn:hover .btn-arrow{color:#25D366;transform:translateX(4px)}
+
+/* ── Payment Methods ── */
+.payment-section{margin:16px 0}
+.payment-wrap{background:linear-gradient(135deg,rgba(15,15,15,0.95),rgba(8,8,8,0.95));border:1px solid rgba(255,255,255,0.04);border-radius:14px;padding:14px 0;position:relative;backdrop-filter:blur(10px);overflow:hidden}
+.payment-wrap::before,.payment-wrap::after{content:'';position:absolute;top:0;bottom:0;width:40px;z-index:2;pointer-events:none}
+.payment-wrap::before{left:0;background:linear-gradient(90deg,rgba(8,8,8,0.95),transparent)}
+.payment-wrap::after{right:0;background:linear-gradient(270deg,rgba(8,8,8,0.95),transparent)}
+.payment-track{display:flex;gap:36px;animation:scrollLeft 28s linear infinite;width:max-content;align-items:center}
+.payment-track img{height:26px;width:auto;opacity:0.3;filter:grayscale(1);transition:all 0.4s}
+.payment-track img:hover{opacity:0.8;filter:grayscale(0)}
+.payment-track span{font-size:11px;font-weight:600;color:rgba(255,255,255,0.15);white-space:nowrap;letter-spacing:2px;text-transform:uppercase;font-family:'Space Grotesk',sans-serif}
+.payment-label{position:absolute;top:-8px;left:50%;transform:translateX(-50%);background:#030303;padding:0 12px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:rgba(255,255,255,0.15);z-index:3}
+
+/* ── Footer ── */
+.footer{background:linear-gradient(135deg,rgba(15,15,15,0.95),rgba(8,8,8,0.95));border:1px solid rgba(255,255,255,0.04);border-radius:18px;padding:20px;margin-top:8px;backdrop-filter:blur(10px)}
+.footer-grid{display:flex;flex-direction:column;gap:10px}
+.footer-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);background:rgba(255,255,255,0.02);text-decoration:none;transition:all 0.3s}
+.footer-item:hover{border-color:rgba(37,211,102,0.12);background:rgba(37,211,102,0.02);transform:translateY(-1px)}
+.footer-item .fi-icon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px;position:relative}
+.footer-item .fi-icon::after{content:'';position:absolute;inset:0;border-radius:9px;border:1px solid rgba(255,255,255,0.04)}
+.footer-item .fi-text{flex:1}
+.footer-item .fi-label{font-size:13px;font-weight:600;color:rgba(255,255,255,0.8);display:block;font-family:'Space Grotesk',sans-serif}
+.footer-item .fi-sub{font-size:10px;color:rgba(255,255,255,0.2);font-weight:500;display:block;margin-top:1px}
+.footer-item .fi-arrow{color:rgba(255,255,255,0.08);font-size:14px;transition:all 0.3s}
+.footer-item:hover .fi-arrow{color:#25D366;transform:translateX(3px)}
+.emergency-btn{display:flex;align-items:center;justify-content:center;gap:10px;background:linear-gradient(135deg,#25D366,#1a9e4e);color:#000;border:none;border-radius:12px;padding:15px;font-size:14px;font-weight:700;font-family:'Inter',sans-serif;cursor:pointer;transition:all 0.3s;width:100%;text-align:center;text-decoration:none;box-shadow:0 4px 20px rgba(37,211,102,0.15);position:relative;overflow:hidden}
+.emergency-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent,rgba(255,255,255,0.1));opacity:0;transition:opacity 0.3s}
+.emergency-btn:hover::before{opacity:1}
+.emergency-btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(37,211,102,0.3)}
+.emergency-btn:active{transform:translateY(0)}
+
+/* ── Footer Bottom ── */
+.footer-bottom{text-align:center;margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.03)}
+.footer-bottom p{font-size:10px;font-weight:500;color:rgba(255,255,255,0.1);letter-spacing:0.5px}
+.footer-bottom p span{color:rgba(37,211,102,0.3)}
+
+/* ── Modal ── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);display:flex;align-items:flex-end;justify-content:center;z-index:999;opacity:0;pointer-events:none;transition:opacity 0.3s;backdrop-filter:blur(4px)}
+.overlay.show{opacity:1;pointer-events:all}
+.modal{background:linear-gradient(135deg,#141414,#0a0a0a);border:1px solid rgba(255,255,255,0.04);border-radius:24px 24px 0 0;padding:28px 24px 36px;width:100%;max-width:460px;transform:translateY(80px);transition:transform 0.4s cubic-bezier(.22,1,.36,1);box-shadow:0 -20px 60px rgba(0,0,0,0.5)}
+.overlay.show .modal{transform:translateY(0)}
+.modal-handle{width:36px;height:4px;background:rgba(255,255,255,0.06);border-radius:2px;margin:0 auto 20px}
+.modal-icon{font-size:38px;text-align:center;margin-bottom:14px}
+.modal-title{color:#fff;font-size:17px;font-weight:700;text-align:center;margin-bottom:6px;font-family:'Space Grotesk',sans-serif}
+.modal-sub{color:rgba(255,255,255,0.3);font-size:13px;font-weight:500;text-align:center;margin-bottom:24px;line-height:1.6}
+.modal-actions{display:flex;flex-direction:column;gap:10px}
+.btn-yes{background:linear-gradient(135deg,#25D366,#1a9e4e);color:#000;border:none;border-radius:12px;padding:16px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.3s;width:100%;box-shadow:0 4px 15px rgba(37,211,102,0.2)}
+.btn-yes:hover{opacity:0.9;transform:translateY(-1px);box-shadow:0 8px 25px rgba(37,211,102,0.3)}
+.btn-no{background:rgba(255,255,255,0.02);color:#ff6b6b;border:1px solid rgba(255,107,107,0.08);border-radius:12px;padding:14px 16px;font-size:14px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.3s;text-align:center;width:100%}
+.btn-no:hover{border-color:rgba(255,107,107,0.2);background:rgba(255,107,107,0.03);transform:translateY(-1px)}
+.btn-no small{display:block;font-size:11px;color:rgba(255,255,255,0.15);font-weight:500;margin-top:4px}
+.msg-exhausted{color:rgba(255,255,255,0.3);font-size:13px;text-align:center;line-height:1.6;padding:8px 0 16px}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar{width:0;height:0}
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- ═══════ HEADER ═══════ -->
+  <div class="header">
+    <a class="logo" href="#">
+      <div class="logo-icon">A</div>
+      <div class="logo-text">Alpha<span>Xchng</span></div>
+    </a>
+    <button class="get-btn" onclick="openWA()">🎯 Get IDs</button>
+  </div>
+
+  <!-- ═══════ STATUS BAR ═══════ -->
+  <div class="status-bar">
+    <div class="status-dot"></div>
+    <span class="status-text">All systems online · <strong>4 agents</strong> available</span>
+  </div>
+
+  <!-- ═══════ TOP MARQUEE ═══════ -->
+  <div class="marquee-wrap">
+    <div class="marquee-inner" id="topMarquee"></div>
+  </div>
+
+  <!-- ═══════ IMAGE SLIDER + 4-SIDED MARQUEES ═══════ -->
+  <div class="slider-section">
+    <div class="marquee-h">
+      <div class="track" id="sliderMarqueeTop"></div>
+    </div>
+
+    <div class="slider-frame">
+      <div class="slider-border">
+        <div class="slider-container" id="sliderContainer"></div>
+        <div class="marquee-v-wrap">
+          <div class="marquee-v-left">
+            <div class="marquee-v-track" id="sliderMarqueeLeft"></div>
+          </div>
+          <div class="marquee-v-right">
+            <div class="marquee-v-track" id="sliderMarqueeRight"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="slider-dots" id="sliderDots"></div>
+
+    <div class="marquee-h">
+      <div class="track" id="sliderMarqueeBottom"></div>
+    </div>
+  </div>
+
+  <!-- ═══════ NUMBER TABS ═══════ -->
+  <div class="section-head">
+    <div class="section-head-left">
+      <span class="section-title">📞 <span>Connect</span></span>
+      <span class="section-badge">LIVE</span>
+    </div>
+    <span class="section-count">4 agents</span>
+  </div>
+  <div class="tabs-card">
+    <div class="btn-grid" id="numberTabs"></div>
+  </div>
+
+  <!-- ═══════ PAYMENT METHODS ═══════ -->
+  <div class="payment-section">
+    <div class="payment-wrap">
+      <div class="payment-track" id="paymentTrack"></div>
+    </div>
+  </div>
+
+  <!-- ═══════ FOOTER ═══════ -->
+  <div class="footer">
+    <div class="footer-grid" id="footerLinks"></div>
+    <div class="footer-bottom">
+      <p>© 2026 <span>AlphaXchng</span> · All rights reserved</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════ MODAL ═══════ -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-icon">📲</div>
+    <div class="modal-title" id="modalTitle">Did WhatsApp open?</div>
+    <div class="modal-sub" id="modalSub">If WhatsApp didn't open or the number showed an error, tap below — we'll instantly connect you to another agent.</div>
+    <div class="modal-actions" id="modalActions">
+      <button class="btn-yes" onclick="closeModal()">✅ Yes, WhatsApp opened fine</button>
+      <button class="btn-no" onclick="tryNext()">
+        ❌ Number not working / didn't open
+        <small>Tap here → we'll switch you to another agent right away</small>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═════════════════════════════════════════════════════════════════════
+//  ADMIN CONFIG — edit anything below
+// ═════════════════════════════════════════════════════════════════════
+
+var NUMBERS = ['8651381149', '7542943418', '8235817872', '9472194303'];
+var COUNTRY = '91';
+
+// Top marquee — text/tags that scroll
+var TOP_MARQUEE_ITEMS = [
+  '🏆 Trusted by 10,000+ traders worldwide',
+  '⚡ ID delivery in under 5 minutes',
+  '🔒 100% secure · military-grade encryption',
+  '💎 24/7 premium customer support',
+  '🚀 Fastest KYC verification in the market',
+  '📊 Real-time trading dashboard access',
+  '🎯 99.9% platform uptime guaranteed',
+  '💬 Dedicated account manager for VIPs',
+  '🌐 Global coverage · 50+ countries supported',
+  '💰 Zero hidden fees · transparent pricing'
+];
+
+// Slider images — add/remove paths here
+var SLIDER_IMAGES = [
+  'image/img-1780125046963.webp',
+  'image/img-1780125272468.png',
+  'image/img-1780125292677.png',
+  'image/img-1780125299767.png',
+  'image/img-1780125305892.png',
+  'image/img-1780125371741.png'
+];
+
+// Marquee text around slider — ALL 4 SIDES
+var SLIDER_MARQUEE_TOP = [
+  '⚡ Ultra-low latency execution', '📈 Real-time market data', '🔒 Bank-grade security',
+  '💎 White-glove onboarding', '🌐 Multi-asset platform', '🏆 Award-winning support',
+  '🤖 AI-powered trading signals', '📊 Institutional-grade charts'
+];
+var SLIDER_MARQUEE_BOTTOM = [
+  '500+ tradable instruments', 'Instant fiat withdrawals', 'Deep liquidity pools',
+  'Copy trading enabled', 'Mobile-first platform', 'API access for pros',
+  'Zero commission options', '24/7 dedicated server'
+];
+var SLIDER_MARQUEE_SIDE = [
+  'ONE-CLICK TRADE', 'ZERO FEES*', 'INSTANT SETUP', 'VIP PERKS',
+  'DEEP LIQUIDITY', 'PRO DASHBOARD', 'RISK MANAGER', 'FAST MATCHING',
+  'ALERTS 24/7', 'SMART ROUTING'
+];
+
+// Number tab labels (one per number in NUMBERS)
+var NUMBER_TABS = [
+  { icon: '🎯', title: 'GET ID 1', desc: 'Primary support line', badge: 'HOT' },
+  { icon: '⚡', title: 'GET ID 2', desc: 'Fast track — 2min delivery', badge: 'FAST' },
+  { icon: '🔄', title: 'GET ID 3', desc: 'Additional agents online', badge: 'READY' },
+  { icon: '🛟', title: 'HELP & SUPPORT', desc: 'General enquiries', badge: '24/7' }
+];
+
+// Footer social links
+var FOOTER_LINKS = [
+  { icon: '✈️', iconBg: 'linear-gradient(135deg,rgba(0,136,204,0.12),rgba(0,136,204,0.04))', label: 'Telegram Channel', sub: '@AlphaXchng_Official', url: 'https://t.me/AlphaXchng_Official' },
+  { icon: '📸', iconBg: 'linear-gradient(135deg,rgba(225,48,108,0.12),rgba(225,48,108,0.04))', label: 'Instagram', sub: '@alphaxchng', url: 'https://instagram.com/alphaxchng' },
+  { icon: '💬', iconBg: 'linear-gradient(135deg,rgba(37,211,102,0.12),rgba(37,211,102,0.04))', label: 'Emergency Support', sub: 'Tap to chat on WhatsApp', url: 'https://wa.me/919999999999', emergency: true }
+];
+
+// Accepted payment methods — image or text
+var PAYMENT_METHODS = [
+  { img: 'image/img-1780125379113.png' },
+  { img: 'image/img-1780125385570.png' },
+  { img: 'image/img-1780125391713.png' },
+  { img: 'image/img-1780125397447.png' },
+  { img: 'image/img-1780125403938.png' },
+  { text: 'USDT' },
+  { text: 'BTC' },
+  { text: 'ETH' },
+  { text: 'UPI' },
+  { text: 'PayTM' }
+];
+
+// ═════════════════════════════════════════════════════════════════════
+//  BUILD ENGINE
+// ═════════════════════════════════════════════════════════════════════
+
+function buildMarquee(id, items) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  var doubled = items.concat(items);
+  var html = '';
+  for (var i = 0; i < doubled.length; i++) {
+    html += '<span>' + (i > 0 && items.length > 0 ? '<span class="dot">✦</span> ' : '') + doubled[i] + '</span>';
+  }
+  el.innerHTML = html;
+}
+
+// Top marquee
+buildMarquee('topMarquee', TOP_MARQUEE_ITEMS);
+
+// Image slider
+(function() {
+  var c = document.getElementById('sliderContainer');
+  var d = document.getElementById('sliderDots');
+  var html = '', dots = '';
+  for (var i = 0; i < SLIDER_IMAGES.length; i++) {
+    html += '<img src="' + SLIDER_IMAGES[i] + '" class="' + (i === 0 ? 'active' : '') + '" alt="slide ' + (i+1) + '">';
+    dots += '<div class="dot' + (i === 0 ? ' active' : '') + '" data-idx="' + i + '"></div>';
+  }
+  c.innerHTML = html;
+  d.innerHTML = dots;
+
+  var current = 0, imgs = c.querySelectorAll('img'), dotsEl = d.querySelectorAll('.dot');
+  var interval = setInterval(function() {
+    imgs[current].classList.remove('active');
+    dotsEl[current].classList.remove('active');
+    current = (current + 1) % imgs.length;
+    imgs[current].classList.add('active');
+    dotsEl[current].classList.add('active');
+  }, 4000);
+
+  d.addEventListener('click', function(e) {
+    var idx = e.target.getAttribute('data-idx');
+    if (idx === null) return;
+    clearInterval(interval);
+    imgs[current].classList.remove('active');
+    dotsEl[current].classList.remove('active');
+    current = parseInt(idx);
+    imgs[current].classList.add('active');
+    dotsEl[current].classList.add('active');
+  });
+})();
+
+// 4-sided slider marquees
+buildMarquee('sliderMarqueeTop', SLIDER_MARQUEE_TOP);
+buildMarquee('sliderMarqueeBottom', SLIDER_MARQUEE_BOTTOM);
+buildMarquee('sliderMarqueeLeft', SLIDER_MARQUEE_SIDE);
+buildMarquee('sliderMarqueeRight', SLIDER_MARQUEE_SIDE);
+
+// Number tabs
+(function() {
+  var el = document.getElementById('numberTabs');
+  var html = '';
+  for (var i = 0; i < NUMBERS.length; i++) {
+    var t = NUMBER_TABS[i] || NUMBER_TABS[NUMBER_TABS.length-1];
+    html += '<a class="wa-btn" href="#" onclick="openWA();return false;">' +
+      (t.badge ? '<span class="badge">' + t.badge + '</span>' : '') +
+      '<div class="btn-icon" style="background:' + (t.iconBg || 'linear-gradient(135deg,rgba(37,211,102,0.08),rgba(37,211,102,0.02))') + '">' + t.icon + '</div>' +
+      '<div class="btn-text">' +
+        '<span class="btn-title">' + t.title + '</span>' +
+        '<span class="btn-desc">' + t.desc + '</span>' +
+      '</div>' +
+      '<span class="btn-arrow">→</span>' +
+    '</a>';
+  }
+  el.innerHTML = html;
+})();
+
+// Payment methods
+(function() {
+  var el = document.getElementById('paymentTrack');
+  var doubled = PAYMENT_METHODS.concat(PAYMENT_METHODS);
+  var html = '';
+  for (var i = 0; i < doubled.length; i++) {
+    var p = doubled[i];
+    if (p.img) {
+      html += '<img src="' + p.img + '" alt="payment" title="' + (p.text || '') + '">';
+    } else {
+      html += '<span>' + p.text + '</span>';
+    }
+  }
+  el.innerHTML = html;
+})();
+
+// Footer
+(function() {
+  var el = document.getElementById('footerLinks');
+  var html = '';
+  for (var i = 0; i < FOOTER_LINKS.length; i++) {
+    var f = FOOTER_LINKS[i];
+    if (f.emergency) {
+      html += '<a class="emergency-btn" href="' + f.url + '" target="_blank" rel="noopener">' +
+        '<span>🚨</span> ' + f.label + ' <span style="font-size:11px;opacity:0.6">→</span></a>';
+    } else {
+      html += '<a class="footer-item" href="' + f.url + '" target="_blank" rel="noopener">' +
+        '<div class="fi-icon" style="background:' + f.iconBg + '">' + f.icon + '</div>' +
+        '<div class="fi-text">' +
+          '<span class="fi-label">' + f.label + '</span>' +
+          '<span class="fi-sub">' + f.sub + '</span>' +
+        '</div>' +
+        '<span class="fi-arrow">→</span>' +
+      '</a>';
+    }
+  }
+  el.innerHTML = html;
+})();
+
+// ═════════════════════════════════════════════════════════════════════
+//  WHATSAPP ROUTING (unchanged logic)
+// ═════════════════════════════════════════════════════════════════════
+
+function setCookie(k, v) {
+  var exp = new Date();
+  exp.setFullYear(exp.getFullYear() + 10);
+  document.cookie = k + '=' + encodeURIComponent(JSON.stringify(v)) + '; expires=' + exp.toUTCString() + '; path=/; SameSite=Lax';
+}
+function getCookie(k) {
+  var m = document.cookie.match(new RegExp('(?:^|; )' + k + '=([^;]*)'));
+  if (!m) return null;
+  try { return JSON.parse(decodeURIComponent(m[1])); } catch(e) { return null; }
+}
+function save(k, v) {
+  setCookie(k, v);
+  try { localStorage.setItem(k, JSON.stringify(v)); } catch(e) {}
+}
+function load(k) {
+  var c = getCookie(k);
+  if (c !== null) return c;
+  try { var l = localStorage.getItem(k); return l ? JSON.parse(l) : null; } catch(e) { return null; }
+}
+function loadActive() {
+  var v = load('_waActive');
+  if (v !== null && v >= 0 && v < NUMBERS.length) return v;
+  var idx = Math.floor(Math.random() * NUMBERS.length);
+  save('_waActive', idx);
+  return idx;
+}
+function loadFailed() {
+  var v = load('_waFailed');
+  return Array.isArray(v) ? v : [];
+}
+function saveFailed(arr) { save('_waFailed', arr); }
+
+var activeIdx = loadActive();
+
+function findNextIdx(startIdx, failedArr) {
+  for (var i = 0; i < NUMBERS.length; i++) {
+    var candidate = (startIdx + i) % NUMBERS.length;
+    if (failedArr.indexOf(candidate) === -1) return candidate;
+  }
+  return null;
+}
+
+var popupTimer = null;
+
+function openWA() {
+  var failed = loadFailed();
+  var idx = findNextIdx(activeIdx, failed);
+  if (idx === null) { showExhausted(); return; }
+  if (idx !== activeIdx) {
+    activeIdx = idx;
+    save('_waActive', activeIdx);
+  }
+  var url = 'https://wa.me/' + COUNTRY + NUMBERS[activeIdx];
+  window.open(url, '_blank');
+  if (popupTimer) clearTimeout(popupTimer);
+  popupTimer = setTimeout(showModal, 2500);
+}
+
+function showModal() {
+  document.getElementById('modalTitle').textContent = 'Did WhatsApp open?';
+  document.getElementById('modalSub').textContent = 'If WhatsApp didn\'t open or the number showed an error, tap below — we\'ll instantly connect you to another agent.';
+  document.getElementById('modalActions').innerHTML =
+    '<button class="btn-yes" onclick="closeModal()">✅ Yes, WhatsApp opened fine</button>' +
+    '<button class="btn-no" onclick="tryNext()">❌ Number not working / didn\'t open' +
+    '<small>Tap here → we\'ll switch you to another agent right away</small></button>';
+  document.getElementById('overlay').classList.add('show');
+}
+function closeModal() { document.getElementById('overlay').classList.remove('show'); }
+
+function tryNext() {
+  closeModal();
+  var failed = loadFailed();
+  if (failed.indexOf(activeIdx) === -1) {
+    failed.push(activeIdx);
+    saveFailed(failed);
+  }
+  var nextIdx = findNextIdx((activeIdx + 1) % NUMBERS.length, failed);
+  if (nextIdx === null) { showExhausted(); return; }
+  activeIdx = nextIdx;
+  save('_waActive', activeIdx);
+  var url = 'https://wa.me/' + COUNTRY + NUMBERS[activeIdx];
+  window.open(url, '_blank');
+  if (popupTimer) clearTimeout(popupTimer);
+  popupTimer = setTimeout(showModal, 2500);
+}
+
+function showExhausted() {
+  document.getElementById('modalTitle').textContent = 'All agents unavailable';
+  document.getElementById('modalSub').textContent = '';
+  document.getElementById('modalActions').innerHTML =
+    '<p class="msg-exhausted">⚠️ All our agents are currently unavailable.<br>Please try again after some time.</p>' +
+    '<button class="btn-yes" onclick="closeModal()">Close</button>';
+  document.getElementById('overlay').classList.add('show');
+}
+
+document.getElementById('overlay').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+</script>
+</body>
+</html>
