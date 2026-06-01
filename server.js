@@ -103,10 +103,22 @@ db.exec(`
     key TEXT PRIMARY KEY,
     value TEXT NOT NULL
   );
+
+  CREATE TABLE IF NOT EXISTS services (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    description TEXT NOT NULL,
+    icon TEXT DEFAULT '✨',
+    sort_order INTEGER DEFAULT 0,
+    created_at TEXT DEFAULT (datetime('now'))
+  );
 `);
 
 // ─── Migrations ───
 try { db.exec("ALTER TABLE marquee_items ADD COLUMN color TEXT DEFAULT '#ffffff'"); } catch(e) { /* column already exists */ }
+
+const uploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
 
 // Copy all payment images from image/ to uploads/ if missing
 ['img-1780125272468.png','img-1780125292677.png','img-1780125299767.png','img-1780125305892.png','img-1780125371741.png','img-1780125379113.png','img-1780125385570.png','img-1780125391713.png','img-1780125397447.png','img-1780125403938.png'].forEach(f => {
@@ -132,9 +144,6 @@ if (countMarquee.c === 0) {
   ];
   items.forEach((t, i) => insert.run(t, i));
 }
-
-const uploadsDir = path.join(__dirname, 'uploads');
-if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
 
 const countSlider = db.prepare('SELECT COUNT(*) as c FROM slider_images').get();
 if (countSlider.c === 0) {
@@ -201,6 +210,20 @@ if (countFooter.c === 0) {
   insert.run('✈️', 'linear-gradient(135deg,rgba(0,136,204,0.12),rgba(0,136,204,0.04))', 'Telegram Channel', '@AlphaXchng_Official', 'https://t.me/AlphaXchng_Official', 0, 0);
   insert.run('📸', 'linear-gradient(135deg,rgba(225,48,108,0.12),rgba(225,48,108,0.04))', 'Instagram', '@alphaxchng', 'https://instagram.com/alphaxchng', 0, 1);
   insert.run('💬', 'linear-gradient(135deg,rgba(139,195,74,0.12),rgba(139,195,74,0.04))', 'Emergency Support', 'Tap to chat on WhatsApp', 'https://wa.me/919999999999', 1, 2);
+}
+
+const countServices = db.prepare('SELECT COUNT(*) as c FROM services').get();
+if (countServices.c === 0) {
+  const insert = db.prepare('INSERT INTO services (title, description, icon, sort_order) VALUES (?, ?, ?, ?)');
+  const services = [
+    ['24×7 Available', 'Round-the-clock support for all your needs', '🕐', 0],
+    ['7% Bonus on Every New Deposits', 'Get instant bonus on your first deposit', '💰', 1],
+    ['Minimum Deposit Amount ₹100', 'Start trading with just ₹100', '📊', 2],
+    ['Maximum Deposit Unlimited', '100% safe funds with no deposit limits', '🔓', 3],
+    ['100% Safe Funds', 'Military-grade encryption for all transactions', '🔒', 4],
+    ['Instant Withdrawals', 'Quick and hassle-free withdrawal process', '⚡', 5]
+  ];
+  services.forEach(s => insert.run(...s));
 }
 
 // ─── Auth Middleware ───
@@ -270,8 +293,17 @@ app.get('/api/public/all', (req, res) => {
 
   data.footerLinks = db.prepare('SELECT icon, icon_bg, label, sub, url, is_emergency FROM footer_links ORDER BY sort_order').all();
 
+  data.services = db.prepare('SELECT id, title, description, icon FROM services ORDER BY sort_order').all();
+
   const footerTheme = db.prepare("SELECT value FROM settings WHERE key = 'footer_theme'").get();
   data.footerTheme = footerTheme ? footerTheme.value : 'neon-green';
+
+  const marqueeSpeed = db.prepare("SELECT value FROM settings WHERE key = 'marquee_speed'").get();
+  const sliderSpeed = db.prepare("SELECT value FROM settings WHERE key = 'slider_speed'").get();
+  const verticalSpeed = db.prepare("SELECT value FROM settings WHERE key = 'vertical_speed'").get();
+  data.marqueeSpeed = marqueeSpeed ? parseInt(marqueeSpeed.value) : 30;
+  data.sliderSpeed = sliderSpeed ? parseInt(sliderSpeed.value) : 20;
+  data.verticalSpeed = verticalSpeed ? parseInt(verticalSpeed.value) : 18;
 
   res.json(data);
 });
@@ -475,6 +507,41 @@ app.put('/api/admin/footer-links/reorder', authMiddleware, (req, res) => {
 });
 
 // ═════════════════════════════════════════════════════════════════════
+//  ADMIN — SERVICES
+// ═════════════════════════════════════════════════════════════════════
+
+app.get('/api/admin/services', authMiddleware, (req, res) => {
+  res.json(db.prepare('SELECT * FROM services ORDER BY sort_order').all());
+});
+
+app.post('/api/admin/services', authMiddleware, (req, res) => {
+  const { title, description, icon } = req.body;
+  if (!title || !description) return res.status(400).json({ error: 'Title and description required' });
+  const maxSort = db.prepare('SELECT COALESCE(MAX(sort_order), -1) + 1 as next FROM services').get();
+  const result = db.prepare('INSERT INTO services (title, description, icon, sort_order) VALUES (?, ?, ?, ?)').run(title, description, icon || '✨', maxSort.next);
+  res.json({ id: result.lastInsertRowid });
+});
+
+app.put('/api/admin/services/:id', authMiddleware, (req, res) => {
+  const { title, description, icon } = req.body;
+  db.prepare('UPDATE services SET title=?, description=?, icon=? WHERE id=?').run(title, description, icon, req.params.id);
+  res.json({ success: true });
+});
+
+app.delete('/api/admin/services/:id', authMiddleware, (req, res) => {
+  db.prepare('DELETE FROM services WHERE id = ?').run(req.params.id);
+  res.json({ success: true });
+});
+
+app.put('/api/admin/services/reorder', authMiddleware, (req, res) => {
+  const { ids } = req.body;
+  const update = db.prepare('UPDATE services SET sort_order = ? WHERE id = ?');
+  const txn = db.transaction(() => ids.forEach((id, i) => update.run(i, id)));
+  txn();
+  res.json({ success: true });
+});
+
+// ═════════════════════════════════════════════════════════════════════
 //  ADMIN — FOOTER THEME
 // ═════════════════════════════════════════════════════════════════════
 
@@ -492,11 +559,38 @@ app.put('/api/admin/footer-theme', authMiddleware, (req, res) => {
 });
 
 // ═════════════════════════════════════════════════════════════════════
+//  ADMIN — MARQUEE SPEED
+// ═════════════════════════════════════════════════════════════════════
+
+app.get('/api/admin/marquee-speed', authMiddleware, (req, res) => {
+  const mainSpeed = db.prepare("SELECT value FROM settings WHERE key = 'marquee_speed'").get();
+  const sliderSpeed = db.prepare("SELECT value FROM settings WHERE key = 'slider_speed'").get();
+  const verticalSpeed = db.prepare("SELECT value FROM settings WHERE key = 'vertical_speed'").get();
+  res.json({
+    marquee_speed: mainSpeed ? parseInt(mainSpeed.value) : 30,
+    slider_speed: sliderSpeed ? parseInt(sliderSpeed.value) : 20,
+    vertical_speed: verticalSpeed ? parseInt(verticalSpeed.value) : 18
+  });
+});
+
+app.put('/api/admin/marquee-speed', authMiddleware, (req, res) => {
+  const { marquee_speed, slider_speed, vertical_speed } = req.body;
+  if (marquee_speed && marquee_speed >= 5 && marquee_speed <= 120) upsertSetting.run('marquee_speed', String(marquee_speed));
+  if (slider_speed && slider_speed >= 5 && slider_speed <= 120) upsertSetting.run('slider_speed', String(slider_speed));
+  if (vertical_speed && vertical_speed >= 5 && vertical_speed <= 120) upsertSetting.run('vertical_speed', String(vertical_speed));
+  res.json({ success: true });
+});
+
+// ═════════════════════════════════════════════════════════════════════
 //  START
 // ═════════════════════════════════════════════════════════════════════
 
-app.listen(PORT, () => {
-  console.log(`AlphaXchng CMS running at http://localhost:${PORT}`);
-  console.log(`Admin panel: http://localhost:${PORT}/admin/`);
-  console.log(`Default password: admin123`);
-});
+if (process.env.VERCEL) {
+  module.exports = app;
+} else {
+  app.listen(PORT, () => {
+    console.log(`AlphaXchng CMS running at http://localhost:${PORT}`);
+    console.log(`Admin panel: http://localhost:${PORT}/admin/`);
+    console.log(`Default password: admin123`);
+  });
+}
