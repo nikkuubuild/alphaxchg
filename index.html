@@ -13,6 +13,7 @@ body[data-theme="ocean-blue"]{--ac:59,130,246;--ac-hex:#3B82F6;--ac-dark:#2563EB
 body[data-theme="sunset-fire"]{--ac:249,115,22;--ac-hex:#F97316;--ac-dark:#EA580C}
 body[data-theme="gold-premium"]{--ac:234,179,8;--ac-hex:#EAB308;--ac-dark:#CA8A04}
 body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 60% at 50% -20%,rgba(var(--ac),0.06),transparent);pointer-events:none;z-index:0}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:linear-gradient(0deg,rgba(255,255,255,0.03) 0%,transparent 15%),linear-gradient(180deg,rgba(255,255,255,0.03) 0%,transparent 15%),linear-gradient(90deg,rgba(255,255,255,0.04) 0%,transparent 20%),linear-gradient(270deg,rgba(255,255,255,0.04) 0%,transparent 20%);box-shadow:inset 0 0 120px rgba(255,255,255,0.03),inset 0 0 60px rgba(255,255,255,0.02)}
 .page{width:100%;max-width:460px;margin:0 auto;padding:0 16px 24px;position:relative;z-index:1}
 
 /* ── Header ── */
