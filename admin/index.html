@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AlphaXchng — Admin Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:#060606;color:#fff;min-height:100vh}
+.hidden{display:none!important}
+
+/* ── Login ── */
+.login-page{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+.login-box{width:100%;max-width:380px;background:linear-gradient(135deg,#111,#0a0a0a);border:1px solid rgba(255,255,255,0.04);border-radius:20px;padding:40px 28px}
+.login-logo{text-align:center;margin-bottom:28px}
+.login-logo h1{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700}
+.login-logo h1 span{color:#8BC34A}
+.login-logo p{color:rgba(255,255,255,0.2);font-size:13px;margin-top:4px;font-weight:500}
+.login-form{display:flex;flex-direction:column;gap:14px}
+.login-form input{padding:14px 16px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.03);color:#fff;font-size:14px;font-family:'Inter',sans-serif;outline:none;transition:border-color 0.2s}
+.login-form input:focus{border-color:rgba(139,195,74,0.3)}
+.login-form button{padding:14px;border-radius:10px;border:none;background:linear-gradient(135deg,#8BC34A,#689F38);color:#000;font-size:14px;font-weight:700;font-family:'Inter',sans-serif;cursor:pointer;transition:all 0.2s}
+.login-form button:hover{opacity:0.9;transform:translateY(-1px)}
+.login-error{color:#ff6b6b;font-size:12px;text-align:center;margin-top:8px;font-weight:500}
+
+/* ── Dashboard ── */
+.dashboard{display:flex;flex-direction:column;min-height:100vh}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;border-bottom:1px solid rgba(255,255,255,0.04);background:rgba(10,10,10,0.95);backdrop-filter:blur(10px);position:sticky;top:0;z-index:100}
+.topbar-left{display:flex;align-items:center;gap:12px}
+.topbar-left h2{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700}
+.topbar-left h2 span{color:#8BC34A}
+.topbar-left .badge{font-size:10px;font-weight:600;color:rgba(139,195,74,0.8);background:rgba(139,195,74,0.06);border:1px solid rgba(139,195,74,0.1);padding:4px 10px;border-radius:6px;letter-spacing:0.5px;text-transform:uppercase}
+.topbar-right{display:flex;align-items:center;gap:12px}
+.btn-logout{padding:8px 16px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02);color:rgba(255,255,255,0.4);font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s}
+.btn-logout:hover{border-color:rgba(255,107,107,0.2);color:#ff6b6b}
+
+/* ── Tabs ── */
+.tab-nav{display:flex;gap:0;padding:0 24px;background:rgba(10,10,10,0.95);border-bottom:1px solid rgba(255,255,255,0.04);overflow-x:auto;scrollbar-width:none}
+.tab-nav::-webkit-scrollbar{display:none}
+.tab-btn{padding:14px 18px;font-size:12px;font-weight:600;color:rgba(255,255,255,0.25);background:none;border:none;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;border-bottom:2px solid transparent;transition:all 0.2s}
+.tab-btn:hover{color:rgba(255,255,255,0.5)}
+.tab-btn.active{color:#8BC34A;border-bottom-color:#8BC34A}
+
+.tab-content{padding:24px;flex:1}
+.tab-pane{display:none}
+.tab-pane.active{display:block}
+
+/* ── Section ── */
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px}
+.section-header h3{font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:600}
+.section-header h3 span{color:rgba(255,255,255,0.15);font-weight:500}
+.btn-add{display:flex;align-items:center;gap:6px;padding:10px 18px;border-radius:8px;border:none;background:linear-gradient(135deg,#8BC34A,#689F38);color:#000;font-size:12px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s}
+.btn-add:hover{opacity:0.9;transform:translateY(-1px)}
+
+/* ── Table ── */
+.table-wrap{background:linear-gradient(135deg,#111,#0c0c0c);border:1px solid rgba(255,255,255,0.04);border-radius:14px;overflow:hidden}
+table{width:100%;border-collapse:collapse}
+th{padding:12px 16px;text-align:left;font-size:11px;font-weight:700;color:rgba(255,255,255,0.2);text-transform:uppercase;letter-spacing:0.8px;background:rgba(255,255,255,0.02);border-bottom:1px solid rgba(255,255,255,0.04)}
+td{padding:12px 16px;font-size:13px;color:rgba(255,255,255,0.7);border-bottom:1px solid rgba(255,255,255,0.02);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+td .preview-img{width:48px;height:48px;border-radius:8px;object-fit:cover;background:#080808}
+td .badge-tag{font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px;background:rgba(139,195,74,0.08);color:#8BC34A;border:1px solid rgba(139,195,74,0.1)}
+td .emergency-tag{font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px;background:rgba(255,107,107,0.08);color:#ff6b6b;border:1px solid rgba(255,107,107,0.1)}
+td .text-mono{font-family:'Space Grotesk',sans-serif;font-size:12px;color:rgba(255,255,255,0.4)}
+.actions{display:flex;gap:6px;justify-content:flex-end}
+.btn-icon{padding:6px 10px;border-radius:6px;border:1px solid rgba(255,255,255,0.04);background:rgba(255,255,255,0.02);color:rgba(255,255,255,0.3);cursor:pointer;font-size:13px;transition:all 0.2s;font-family:'Inter',sans-serif}
+.btn-icon:hover{border-color:rgba(139,195,74,0.15);color:#8BC34A}
+.btn-icon.danger:hover{border-color:rgba(255,107,107,0.15);color:#ff6b6b}
+.empty-state{text-align:center;padding:40px 20px;color:rgba(255,255,255,0.15);font-size:13px}
+
+/* ── Modal ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:200;padding:20px;backdrop-filter:blur(4px)}
+.modal-box{width:100%;max-width:480px;background:linear-gradient(135deg,#141414,#0a0a0a);border:1px solid rgba(255,255,255,0.06);border-radius:18px;padding:28px;max-height:90vh;overflow-y:auto}
+.modal-box h3{font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:600;margin-bottom:6px}
+.modal-box .modal-sub{color:rgba(255,255,255,0.2);font-size:12px;margin-bottom:20px}
+.modal-form{display:flex;flex-direction:column;gap:12px}
+.modal-form label{font-size:11px;font-weight:700;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.8px}
+.modal-form input,.modal-form textarea,.modal-form select{padding:12px 14px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.03);color:#fff;font-size:13px;font-family:'Inter',sans-serif;outline:none;transition:border-color 0.2s;width:100%}
+.modal-form input:focus,.modal-form textarea:focus{border-color:rgba(139,195,74,0.3)}
+.modal-form textarea{resize:vertical;min-height:60px}
+.modal-form .form-row{display:flex;gap:12px}
+.modal-form .form-row > *{flex:1}
+.modal-form .file-upload{position:relative;overflow:hidden}
+.modal-form .file-upload input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
+.modal-form .file-upload .file-label{display:flex;align-items:center;gap:8px;padding:12px 14px;border-radius:8px;border:1px dashed rgba(255,255,255,0.08);background:rgba(255,255,255,0.02);color:rgba(255,255,255,0.3);font-size:12px;cursor:pointer;transition:all 0.2s}
+.modal-form .file-upload .file-label:hover{border-color:rgba(139,195,74,0.2);color:rgba(139,195,74,0.5)}
+.modal-form .preview-row{display:flex;align-items:center;gap:12px;margin-top:8px}
+.modal-form .preview-row img{width:56px;height:56px;border-radius:8px;object-fit:cover}
+.modal-actions{display:flex;gap:10px;margin-top:8px}
+.modal-actions button{flex:1;padding:12px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s}
+.btn-save{background:linear-gradient(135deg,#8BC34A,#689F38);color:#000;border:none}
+.btn-save:hover{opacity:0.9}
+.btn-cancel{background:rgba(255,255,255,0.02);color:rgba(255,255,255,0.4);border:1px solid rgba(255,255,255,0.06)}
+.btn-cancel:hover{border-color:rgba(255,255,255,0.1);color:#fff}
+
+/* ── Toast ── */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);padding:12px 24px;border-radius:10px;font-size:13px;font-weight:600;z-index:300;animation:toastIn 0.3s;font-family:'Inter',sans-serif}
+.toast.success{background:#8BC34A;color:#000}
+.toast.error{background:#ff6b6b;color:#000}
+@keyframes toastIn{0%{opacity:0;transform:translateX(-50%) translateY(20px)}100%{opacity:1;transform:translateX(-50%) translateY(0)}}
+
+/* ── Reorder ── */
+.drag-handle{color:rgba(255,255,255,0.1);cursor:grab;font-size:16px;padding-right:4px}
+.drag-handle:active{cursor:grabbing}
+
+/* ── Items badge ── */
+.count-badge{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:6px;background:rgba(139,195,74,0.08);color:#8BC34A;font-size:11px;font-weight:700}
+</style>
+</head>
+<body>
+
+<!-- ═══════ LOGIN ═══════ -->
+<div class="login-page" id="loginPage">
+  <div class="login-box">
+    <div class="login-logo">
+      <h1>Alpha<span>Xchng</span></h1>
+      <p>Content Management System</p>
+    </div>
+    <form class="login-form" id="loginForm">
+      <input type="password" id="loginPassword" placeholder="Enter admin password" autofocus>
+      <button type="submit">Sign In</button>
+      <div class="login-error" id="loginError"></div>
+    </form>
+  </div>
+</div>
+
+<!-- ═══════ DASHBOARD ═══════ -->
+<div class="dashboard hidden" id="dashboard">
+
+  <div class="topbar">
+    <div class="topbar-left">
+      <h2>Alpha<span>Xchng</span></h2>
+      <span class="badge">CMS</span>
+    </div>
+    <div class="topbar-right">
+      <button class="btn-logout" onclick="logout()">Logout</button>
+    </div>
+  </div>
+
+  <div class="tab-nav" id="tabNav"></div>
+
+  <div class="tab-content" id="tabContent"></div>
+
+</div>
+
+<script>
+const API = '';
+let token = null;
+
+// ─── Auth ───
+document.getElementById('loginForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const pw = document.getElementById('loginPassword').value;
+  try {
+    const r = await fetch(API + '/api/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: pw }) });
+    if (!r.ok) { document.getElementById('loginError').textContent = 'Invalid password'; return; }
+    const d = await r.json();
+    token = d.token;
+    localStorage.setItem('token', token);
+    showDashboard();
+  } catch(e) { document.getElementById('loginError').textContent = 'Connection error'; }
+});
+
+function logout() {
+  token = null;
+  localStorage.removeItem('token');
+  document.cookie = 'token=;path=/;max-age=0';
+  document.getElementById('dashboard').classList.add('hidden');
+  document.getElementById('loginPage').classList.remove('hidden');
+}
+
+// ─── Toast ───
+function toast(msg, type) {
+  const t = document.createElement('div');
+  t.className = 'toast ' + type;
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2500);
+}
+
+// ─── Tabs ───
+const TABS = [
+  { id: 'marquee', label: '🏷️ Marquee' },
+  { id: 'slider', label: '🖼️ Slider' },
+  { id: 'slider-marquee', label: '🌀 Side Marquee' },
+  { id: 'numbers', label: '📞 Numbers' },
+  { id: 'payments', label: '💳 Payments' },
+  { id: 'footer', label: '🔗 Footer' }
+];
+
+let activeTab = 'marquee';
+
+async function showDashboard() {
+  document.getElementById('loginPage').classList.add('hidden');
+  document.getElementById('dashboard').classList.remove('hidden');
+
+  // Build tabs
+  const nav = document.getElementById('tabNav');
+  nav.innerHTML = TABS.map(t =>
+    '<button class="tab-btn' + (t.id === activeTab ? ' active' : '') + '" onclick="switchTab(\'' + t.id + '\')">' + t.label + '</button>'
+  ).join('');
+
+  renderTab(activeTab);
+}
+
+function switchTab(id) {
+  activeTab = id;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.getAttribute('onclick').includes(id)));
+  renderTab(id);
+}
+
+function renderTab(id) {
+  const content = document.getElementById('tabContent');
+  content.innerHTML = '<div style="padding:40px;text-align:center;color:rgba(255,255,255,0.1)">Loading...</div>';
+  switch(id) {
+    case 'marquee': renderMarquee(); break;
+    case 'slider': renderSlider(); break;
+    case 'slider-marquee': renderSliderMarquee(); break;
+    case 'numbers': renderNumbers(); break;
+    case 'payments': renderPayments(); break;
+    case 'footer': renderFooter(); break;
+  }
+}
+
+// ─── Generic helpers ───
+function api(path, opts) {
+  return fetch(API + path, { ...opts, headers: { ...opts?.headers, 'Authorization': 'Bearer ' + token } });
+}
+
+function showModal(html) {
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = '<div class="modal-box">' + html + '</div>';
+  overlay.addEventListener('click', function(e) { if (e.target === this) overlay.remove(); });
+  document.body.appendChild(overlay);
+  return overlay;
+}
+
+function escapeHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// ═════════════════════════════════════════════════════════════════════
+//  MARQUEE
+// ═════════════════════════════════════════════════════════════════════
+
+async function renderMarquee() {
+  const el = document.getElementById('tabContent');
+  try {
+    const r = await api('/api/admin/marquee-items');
+    const items = await r.json();
+    el.innerHTML =
+      '<div class="section-header"><h3>Marquee Items <span>(' + items.length + ')</span></h3><button class="btn-add" onclick="addMarquee()">+ Add Item</button></div>' +
+      '<div class="table-wrap"><table><thead><tr><th style="width:40px"></th><th>Text</th><th style="width:60px">Color</th><th style="width:100px"></th></tr></thead><tbody>' +
+      items.map((item, i) =>
+        '<tr>' +
+          '<td><span class="drag-handle">⠿</span></td>' +
+          '<td>' + escapeHtml(item.text) + '</td>' +
+          '<td><span style="display:inline-block;width:22px;height:22px;border-radius:6px;background:' + (item.color || '#ffffff') + ';border:1px solid rgba(255,255,255,0.15)"></span></td>' +
+          '<td><div class="actions">' +
+            '<button class="btn-icon" onclick="editMarquee(' + item.id + ')">✏️</button>' +
+            '<button class="btn-icon danger" onclick="deleteMarquee(' + item.id + ')">🗑️</button>' +
+          '</div></td>' +
+        '</tr>'
+      ).join('') +
+      '</tbody></table></div>';
+  } catch(e) { el.innerHTML = '<div class="empty-state">Failed to load. Is the server running?</div>'; }
+}
+
+function addMarquee() {
+  const modal = showModal(
+    '<h3>Add Marquee Item</h3><p class="modal-sub">Text that scrolls in the top marquee</p>' +
+    '<div class="modal-form">' +
+      '<label>Text</label><input id="fMarqueeText" placeholder="e.g. Trusted by 10,000+ traders">' +
+      '<label>Text Color</label><div style="display:flex;align-items:center;gap:10px"><input type="color" id="fMarqueeColor" value="#ffffff" style="width:50px;height:36px;border:none;border-radius:6px;cursor:pointer;background:transparent"><input id="fMarqueeColorHex" value="#ffffff" style="width:100px;font-family:monospace" oninput="var v=this.value;if(/^#[0-9a-fA-F]{6}$/.test(v))document.getElementById(\'fMarqueeColor\').value=v"><script>document.getElementById(\'fMarqueeColor\').addEventListener(\'input\',function(){document.getElementById(\'fMarqueeColorHex\').value=this.value})</script></div>' +
+      '<div class="modal-actions"><button class="btn-save" onclick="saveMarquee()">Add</button><button class="btn-cancel" onclick="this.closest(\'.modal-overlay\').remove()">Cancel</button></div>' +
+    '</div>'
+  );
+  setTimeout(() => document.getElementById('fMarqueeText')?.focus(), 100);
+}
+
+async function saveMarquee() {
+  const text = document.getElementById('fMarqueeText').value;
+  const color = document.getElementById('fMarqueeColor').value;
+  if (!text) return;
+  await api('/api/admin/marquee-items', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text, color }) });
+  document.querySelector('.modal-overlay').remove();
+  toast('Item added', 'success');
+  renderMarquee();
+}
+
+async function editMarquee(id) {
+  const r = await api('/api/admin/marquee-items');
+  const items = await r.json();
+  const item = items.find(i => i.id === id);
+  if (!item) return;
+  const modal = showModal(
+    '<h3>Edit Marquee Item</h3><p class="modal-sub">Update the marquee text</p>' +
+    '<div class="modal-form">' +
+      '<label>Text</label><input id="fMarqueeText" value="' + escapeHtml(item.text) + '">' +
+      '<label>Text Color</label><div style="display:flex;align-items:center;gap:10px"><input type="color" id="fMarqueeColor" value="' + (item.color || '#ffffff') + '" style="width:50px;height:36px;border:none;border-radius:6px;cursor:pointer;background:transparent"><input id="fMarqueeColorHex" value="' + (item.color || '#ffffff') + '" style="width:100px;font-family:monospace" oninput="var v=this.value;if(/^#[0-9a-fA-F]{6}$/.test(v))document.getElementById(\'fMarqueeColor\').value=v"><script>document.getElementById(\'fMarqueeColor\').addEventListener(\'input\',function(){document.getElementById(\'fMarqueeColorHex\').value=this.value})</script></div>' +
+      '<div class="modal-actions"><button class="btn-save" onclick="updateMarquee(' + id + ')">Save</button><button class="btn-cancel" onclick="this.closest(\'.modal-overlay\').remove()">Cancel</button></div>' +
+    '</div>'
+  );
+  setTimeout(() => document.getElementById('fMarqueeText')?.select(), 100);
+}
+
+async function updateMarquee(id) {
+  const text = document.getElementById('fMarqueeText').value;
+  const color = document.getElementById('fMarqueeColor').value;
+  if (!text) return;
+  await api('/api/admin/marquee-items/' + id, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text, color }) });
+  document.querySelector('.modal-overlay').remove();
+  toast('Item updated', 'success');
+  renderMarquee();
+}
+
+async function deleteMarquee(id) {
+  if (!confirm('Delete this item?')) return;
+  await api('/api/admin/marquee-items/' + id, { method: 'DELETE' });
+  toast('Item deleted', 'success');
+  renderMarquee();
+}
+
+// ═════════════════════════════════════════════════════════════════════
+//  SLIDER
+// ═════════════════════════════════════════════════════════════════════
+
+async function renderSlider() {
+  const el = document.getElementById('tabContent');
+  try {
+    const r = await api('/api/admin/slider-images');
+    const items = await r.json();
+    el.innerHTML =
+      '<div class="section-header"><h3>Slider Images <span>(' + items.length + ')</span></h3><button class="btn-add" onclick="addSliderImage()">+ Upload Image</button></div>' +
+      '<div class="table-wrap"><table><thead><tr><th style="width:40px"></th><th>Preview</th><th>File</th><th style="width:80px"></th></tr></thead><tbody>' +
+      items.map((item, i) =>
+        '<tr>' +
+          '<td><span class="drag-handle">⠿</span></td>' +
+          '<td><img class="preview-img" src="/uploads/' + encodeURIComponent(item.filename) + '"></td>' +
+          '<td><span class="text-mono">' + escapeHtml(item.original_name || item.filename) + '</span></td>' +
+          '<td><div class="actions"><button class="btn-icon danger" onclick="deleteSliderImage(' + item.id + ')">🗑️</button></div></td>' +
+        '</tr>'
+      ).join('') +
+      '</tbody></table></div>';
+  } catch(e) { el.innerHTML = '<div class="empty-state">Failed to load</div>'; }
+}
+
+function addSliderImage() {
+  const modal = showModal(
+    '<h3>Upload Slider Image</h3><p class="modal-sub">Square images work best (1:1 ratio)</p>' +
+    '<div class="modal-form">' +
+      '<div class="file-upload">' +
+        '<input type="file" id="fSliderFile" accept="image/*">' +
+        '<div class="file-label">📁 Choose image file</div>' +
+      '</div>' +
+      '<div class="preview-row hidden" id="sliderPreview"><img><span style="font-size:12px;color:rgba(255,255,255,0.3)" id="sliderFileName"></span></div>' +
+      '<div class="modal-actions"><button class="btn-save" onclick="saveSliderImage()">Upload</button><button class="btn-cancel" onclick="this.closest(\'.modal-overlay\').remove()">Cancel</button></div>' +
+    '</div>'
+  );
+  document.getElementById('fSliderFile')?.addEventListener('change', function() {
+    const preview = document.getElementById('sliderPreview');
+    const name = document.getElementById('sliderFileName');
+    preview.classList.remove('hidden');
+    name.textContent = this.files[0]?.name;
+    const reader = new FileReader();
+    reader.onload = function(e) { preview.querySelector('img').src = e.target.result; };
+    if (this.files[0]) reader.readAsDataURL(this.files[0]);
+  });
+}
+
+async function saveSliderImage() {
+  const file = document.getElementById('fSliderFile').files[0];
+  if (!file) return;
+  const fd = new FormData();
+  fd.append('image', file);
+  await api('/api/admin/slider-images', { method: 'POST', body: fd });
+  document.querySelector('.modal-overlay').remove();
+  toast('Image uploaded', 'success');
+  renderSlider();
+}
+
+async function deleteSliderImage(id) {
+  if (!confirm('Delete this image?')) return;
+  await api('/api/admin/slider-images/' + id, { method: 'DELETE' });
+  toast('Image deleted', 'success');
+  renderSlider();
+}
+
+// ═════════════════════════════════════════════════════════════════════
+//  SLIDER MARQUEE
+// ═════════════════════════════════════════════════════════════════════
+
+async function renderSliderMarquee() {
+  const el = document.getElementById('tabContent');
+  try {
+    const r = await api('/api/admin/slider-marquee');
+    const data = await r.json();
+    const positions = { top: 'Top', bottom: 'Bottom', left: 'Left', right: 'Right' };
+    let html = '<div class="section-header"><h3>Side Marquee Text <span>(4 sides)</span></h3></div>';
+    for (const row of data) {
+      const items = row.items || [];
+      html +=
+        '<div style="margin-bottom:16px">' +
+          '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">' +
+            '<h4 style="font-size:14px;font-weight:600;color:rgba(255,255,255,0.7)">' + (positions[row.position] || row.position) + ' <span style="color:rgba(255,255,255,0.15);font-weight:500">(' + items.length + ' items)</span></h4>' +
+            '<button class="btn-add" style="padding:6px 14px;font-size:11px" onclick="editSliderMarquee(\'' + row.position + '\')">Edit</button>' +
+          '</div>' +
+          '<div class="table-wrap"><table><thead><tr><th>Items</th></tr></thead><tbody>' +
+          '<tr><td style="font-size:12px;color:rgba(255,255,255,0.3)">' + items.map(escapeHtml).join(' <span style="color:rgba(255,255,255,0.1)">·</span> ') + '</td></tr>' +
+          '</tbody></table></div>' +
+        '</div>';
+    }
+    el.innerHTML = html;
+  } catch(e) { el.innerHTML = '<div class="empty-state">Failed to load</div>'; }
+}
+
+function editSliderMarquee(position) {
+  const modal = showModal(
+    '<h3>Edit ' + position.charAt(0).toUpperCase() + position.slice(1) + ' Marquee</h3><p class="modal-sub">One item per line</p>' +
+    '<div class="modal-form">' +
+      '<label>Items (each on a new line)</label><textarea id="fSMItems" rows="6" placeholder="Ultra-low latency execution&#10;Real-time market data"></textarea>' +
+      '<div class="modal-actions"><button class="btn-save" onclick="saveSliderMarquee(\'' + position + '\')">Save</button><button class="btn-cancel" onclick="this.closest(\'.modal-overlay\').remove()">Cancel</button></div>' +
+    '</div>'
+  );
+  api('/api/admin/slider-marquee').then(r => r.json()).then(data => {
+    const row = data.find(d => d.position === position);
+    if (row) document.getElementById('fSMItems').value = (row.items || []).join('\n');
+  });
+}
+
+async function saveSliderMarquee(position) {
+  const raw = document.getElementById('fSMItems').value;
+  const items = raw.split('\n').map(s => s.trim()).filter(s => s);
+  await api('/api/admin/slider-marquee/' + position, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ items }) });
+  document.querySelector('.modal-overlay').remove();
+  toast('Marquee updated', 'success');
+  renderSliderMarquee();
+}
+
+// ═════════════════════════════════════════════════════════════════════
+//  NUMBERS
+// ═════════════════════════════════════════════════════════════════════
+
+async function renderNumbers() {
+  const el = document.getElementById('tabContent');
+  try {
+    const r = await api('/api/admin/numbers');
+    const items = await r.json();
+    el.innerHTML =
+      '<div class="section-header"><h3>WhatsApp Numbers <span>(' + items.length + ')</span></h3><button class="btn-add" onclick="addNumber()">+ Add Number</button></div>' +
+      '<div class="table-wrap"><table><thead><tr><th style="width:40px"></th><th>Number</th><th>Title</th><th>Badge</th><th style="width:100px"></th></tr></thead><tbody>' +
+      items.map((item, i) =>
+        '<tr>' +
+          '<td><span class="drag-handle">⠿</span></td>' +
+          '<td><span class="text-mono">+' + COUNTRY + ' ' + item.number + '</span></td>' +
+          '<td>' + item.icon + ' ' + escapeHtml(item.title) + '</td>' +
+          '<td>' + (item.badge ? '<span class="badge-tag">' + escapeHtml(item.badge) + '</span>' : '-') + '</td>' +
+          '<td><div class="actions">' +
+            '<button class="btn-icon" onclick="editNumber(' + item.id + ')">✏️</button>' +
+            '<button class="btn-icon danger" onclick="deleteNumber(' + item.id + ')">🗑️</button>' +
+          '</div></td>' +
+        '</tr>'
+      ).join('') +
+      '</tbody></table></div>';
+  } catch(e) { el.innerHTML = '<div class="empty-state">Failed to load</div>'; }
+}
+
+var COUNTRY = '91';
+
+function addNumber(data) {
+  const d = data || {};
+  const modal = showModal(
+    '<h3>' + (data ? 'Edit' : 'Add') + ' WhatsApp Number</h3><p class="modal-sub">Configure a support number tab</p>' +
+    '<div class="modal-form">' +
+      '<div class="form-row"><div><label>Number</label><input id="fNumNumber" value="' + (d.number || '') + '" placeholder="8651381149"></div><div style="width:80px"><label>Icon</label><input id="fNumIcon" value="' + escapeHtml(d.icon || '🎯') + '" placeholder="🎯"></div></div>' +
+      '<label>Title</label><input id="fNumTitle" value="' + escapeHtml(d.title || '') + '" placeholder="GET ID 1">' +
+      '<div class="form-row"><div><label>Description</label><input id="fNumDesc" value="' + escapeHtml(d.description || '') + '" placeholder="Primary support line"></div><div><label>Badge</label><input id="fNumBadge" value="' + escapeHtml(d.badge || '') + '" placeholder="HOT"></div></div>' +
+      '<div class="modal-actions">' +
+        '<button class="btn-save" onclick="' + (data ? 'updateNumber(' + d.id + ')' : 'saveNumber()') + '">' + (data ? 'Save' : 'Add') + '</button>' +
+        '<button class="btn-cancel" onclick="this.closest(\'.modal-overlay\').remove()">Cancel</button>' +
+      '</div>' +
+    '</div>'
+  );
+  if (!data) setTimeout(() => document.getElementById('fNumNumber')?.focus(), 100);
+}
+
+async function saveNumber() {
+  const payload = {
+    number: document.getElementById('fNumNumber').value,
+    icon: document.getElementById('fNumIcon').value || '🎯',
+    title: document.getElementById('fNumTitle').value,
+    description: document.getElementById('fNumDesc').value,
+    badge: document.getElementById('fNumBadge').value
+  };
+  if (!payload.number || !payload.title) return;
+  await api('/api/admin/numbers', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+  document.querySelector('.modal-overlay').remove();
+  toast('Number added', 'success');
+  renderNumbers();
+}
+
+async function editNumber(id) {
+  const r = await api('/api/admin/numbers');
+  const items = await r.json();
+  const item = items.find(i => i.id === id);
+  if (item) addNumber(item);
+}
+
+async function updateNumber(id) {
+  const payload = {
+    number: document.getElementById('fNumNumber').value,
+    icon: document.getElementById('fNumIcon').value || '🎯',
+    title: document.getElementById('fNumTitle').value,
+    description: document.getElementById('fNumDesc').value,
+    badge: document.getElementById('fNumBadge').value
+  };
+  if (!payload.number || !payload.title) return;
+  await api('/api/admin/numbers/' + id, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+  document.querySelector('.modal-overlay').remove();
+  toast('Number updated', 'success');
+  renderNumbers();
+}
+
+async function deleteNumber(id) {
+  if (!confirm('Delete this number?')) return;
+  await api('/api/admin/numbers/' + id, { method: 'DELETE' });
+  toast('Number deleted', 'success');
+  renderNumbers();
+}
+
+// ═════════════════════════════════════════════════════════════════════
+//  PAYMENTS
+// ═════════════════════════════════════════════════════════════════════
+
+async function renderPayments() {
+  const el = document.getElementById('tabContent');
+  try {
+    const r = await api('/api/admin/payment-methods');
+    const items = await r.json();
+    el.innerHTML =
+      '<div class="section-header"><h3>Payment Methods <span>(' + items.length + ')</span></h3><button class="btn-add" onclick="addPayment()">+ Add Method</button></div>' +
+      '<div class="table-wrap"><table><thead><tr><th style="width:40px"></th><th>Type</th><th>Value</th><th style="width:80px"></th></tr></thead><tbody>' +
+      items.map((item, i) =>
+        '<tr>' +
+          '<td><span class="drag-handle">⠿</span></td>' +
+          '<td>' + (item.type === 'image' ? '<span class="badge-tag">Image</span>' : '<span style="color:rgba(255,255,255,0.3)">Text</span>') + '</td>' +
+          '<td>' + (item.type === 'image' ? '<span class="text-mono">' + escapeHtml(item.filename) + '</span>' : '<span style="font-weight:600">' + escapeHtml(item.text_value) + '</span>') + '</td>' +
+          '<td><div class="actions"><button class="btn-icon danger" onclick="deletePayment(' + item.id + ')">🗑️</button></div></td>' +
+        '</tr>'
+      ).join('') +
+      '</tbody></table></div>';
+  } catch(e) { el.innerHTML = '<div class="empty-state">Failed to load</div>'; }
+}
+
+function addPayment() {
+  const modal = showModal(
+    '<h3>Add Payment Method</h3><p class="modal-sub">Add a text label or upload an image</p>' +
+    '<div class="modal-form">' +
+      '<label>Text (leave empty if uploading image)</label><input id="fPayText" placeholder="e.g. USDT">' +
+      '<div class="file-upload">' +
+        '<input type="file" id="fPayFile" accept="image/*">' +
+        '<div class="file-label">📁 Or upload an image</div>' +
+      '</div>' +
+      '<div class="preview-row hidden" id="payPreview"><img><span style="font-size:12px;color:rgba(255,255,255,0.3)" id="payFileName"></span></div>' +
+      '<div class="modal-actions"><button class="btn-save" onclick="savePayment()">Add</button><button class="btn-cancel" onclick="this.closest(\'.modal-overlay\').remove()">Cancel</button></div>' +
+    '</div>'
+  );
+  document.getElementById('fPayFile')?.addEventListener('change', function() {
+    const p = document.getElementById('payPreview');
+    p.classList.remove('hidden');
+    document.getElementById('payFileName').textContent = this.files[0]?.name;
+    const reader = new FileReader();
+    reader.onload = function(e) { p.querySelector('img').src = e.target.result; };
+    if (this.files[0]) reader.readAsDataURL(this.files[0]);
+  });
+}
+
+async function savePayment() {
+  const file = document.getElementById('fPayFile').files[0];
+  const text = document.getElementById('fPayText').value;
+  if (!file && !text) return;
+  if (file) {
+    const fd = new FormData();
+    fd.append('image', file);
+    fd.append('text_value', text || '');
+    await api('/api/admin/payment-methods', { method: 'POST', body: fd });
+  } else {
+    await api('/api/admin/payment-methods', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text_value: text }) });
+  }
+  document.querySelector('.modal-overlay').remove();
+  toast('Payment method added', 'success');
+  renderPayments();
+}
+
+async function deletePayment(id) {
+  if (!confirm('Delete this payment method?')) return;
+  await api('/api/admin/payment-methods/' + id, { method: 'DELETE' });
+  toast('Deleted', 'success');
+  renderPayments();
+}
+
+// ═════════════════════════════════════════════════════════════════════
+//  FOOTER
+// ═════════════════════════════════════════════════════════════════════
+
+async function renderFooter() {
+  const el = document.getElementById('tabContent');
+  try {
+    const r = await api('/api/admin/footer-links');
+    const items = await r.json();
+    el.innerHTML =
+      '<div class="section-header"><h3>Footer Links <span>(' + items.length + ')</span></h3><button class="btn-add" onclick="addFooterLink()">+ Add Link</button></div>' +
+      '<div class="table-wrap"><table><thead><tr><th style="width:40px"></th><th>Label</th><th>URL</th><th>Type</th><th style="width:100px"></th></tr></thead><tbody>' +
+      items.map((item, i) =>
+        '<tr>' +
+          '<td><span class="drag-handle">⠿</span></td>' +
+          '<td>' + item.icon + ' ' + escapeHtml(item.label) + '</td>' +
+          '<td><span class="text-mono">' + escapeHtml(item.url) + '</span></td>' +
+          '<td>' + (item.is_emergency ? '<span class="emergency-tag">Emergency</span>' : '<span style="color:rgba(255,255,255,0.2)">Link</span>') + '</td>' +
+          '<td><div class="actions">' +
+            '<button class="btn-icon" onclick="editFooterLink(' + item.id + ')">✏️</button>' +
+            '<button class="btn-icon danger" onclick="deleteFooterLink(' + item.id + ')">🗑️</button>' +
+          '</div></td>' +
+        '</tr>'
+      ).join('') +
+      '</tbody></table></div>';
+  } catch(e) { el.innerHTML = '<div class="empty-state">Failed to load</div>'; }
+}
+
+function addFooterLink(data) {
+  const d = data || {};
+  const modal = showModal(
+    '<h3>' + (data ? 'Edit' : 'Add') + ' Footer Link</h3><p class="modal-sub">Social links or emergency contact</p>' +
+    '<div class="modal-form">' +
+      '<div class="form-row"><div><label>Label</label><input id="fFootLabel" value="' + escapeHtml(d.label || '') + '" placeholder="Telegram Channel"></div><div><label>Icon (emoji)</label><input id="fFootIcon" value="' + escapeHtml(d.icon || '✈️') + '" placeholder="✈️"></div></div>' +
+      '<label>Subtitle</label><input id="fFootSub" value="' + escapeHtml(d.sub || '') + '" placeholder="@username">' +
+      '<label>URL</label><input id="fFootUrl" value="' + escapeHtml(d.url || '') + '" placeholder="https://t.me/...">' +
+      '<label style="display:flex;align-items:center;gap:8px;cursor:pointer;text-transform:none;letter-spacing:0;font-weight:500;font-size:13px;color:rgba(255,255,255,0.5)">' +
+        '<input type="checkbox" id="fFootEmergency" ' + (d.is_emergency ? 'checked' : '') + ' style="width:16px;height:16px;accent-color:#8BC34A"> Emergency button (green CTA)</label>' +
+      '<div class="modal-actions">' +
+        '<button class="btn-save" onclick="' + (data ? 'updateFooterLink(' + d.id + ')' : 'saveFooterLink()') + '">' + (data ? 'Save' : 'Add') + '</button>' +
+        '<button class="btn-cancel" onclick="this.closest(\'.modal-overlay\').remove()">Cancel</button>' +
+      '</div>' +
+    '</div>'
+  );
+  if (!data) setTimeout(() => document.getElementById('fFootLabel')?.focus(), 100);
+}
+
+async function saveFooterLink() {
+  const payload = {
+    icon: document.getElementById('fFootIcon').value || '🔗',
+    label: document.getElementById('fFootLabel').value,
+    sub: document.getElementById('fFootSub').value,
+    url: document.getElementById('fFootUrl').value,
+    is_emergency: document.getElementById('fFootEmergency').checked ? 1 : 0
+  };
+  if (!payload.label || !payload.url) return;
+  await api('/api/admin/footer-links', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+  document.querySelector('.modal-overlay').remove();
+  toast('Link added', 'success');
+  renderFooter();
+}
+
+async function editFooterLink(id) {
+  const r = await api('/api/admin/footer-links');
+  const items = await r.json();
+  const item = items.find(i => i.id === id);
+  if (item) addFooterLink(item);
+}
+
+async function updateFooterLink(id) {
+  const payload = {
+    icon: document.getElementById('fFootIcon').value || '🔗',
+    label: document.getElementById('fFootLabel').value,
+    sub: document.getElementById('fFootSub').value,
+    url: document.getElementById('fFootUrl').value,
+    is_emergency: document.getElementById('fFootEmergency').checked ? 1 : 0
+  };
+  if (!payload.label || !payload.url) return;
+  await api('/api/admin/footer-links/' + id, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+  document.querySelector('.modal-overlay').remove();
+  toast('Link updated', 'success');
+  renderFooter();
+}
+
+async function deleteFooterLink(id) {
+  if (!confirm('Delete this link?')) return;
+  await api('/api/admin/footer-links/' + id, { method: 'DELETE' });
+  toast('Deleted', 'success');
+  renderFooter();
+}
+
+// ═════════════════════════════════════════════════════════════════════
+//  INIT — check for existing token
+// ═════════════════════════════════════════════════════════════════════
+
+(async function() {
+  const savedToken = localStorage.getItem('token');
+  if (savedToken) {
+    try {
+      const r = await fetch(API + '/api/check-auth', { headers: { 'Authorization': 'Bearer ' + savedToken } });
+      if (r.ok) { token = savedToken; showDashboard(); return; }
+    } catch(e) {}
+  }
+  // else stay at login
+})();
+</script>
+</body>
+</html>
