@@ -650,7 +650,7 @@ app.get('/api/admin/footer-theme', authMiddleware, async (req, res) => {
 app.put('/api/admin/footer-theme', authMiddleware, async (req, res) => {
   try {
     const { theme } = req.body;
-    const valid = ['neon-green', 'cyber-purple', 'ocean-blue', 'sunset-fire', 'gold-premium', 'royal-purple', 'facebook-blue', 'slice-indigo'];
+    const valid = ['neon-green', 'cyber-purple', 'ocean-blue', 'sunset-fire', 'gold-premium', 'royal-purple', 'facebook-blue', 'slice-indigo', 'alpha-premium'];
     if (!valid.includes(theme)) return res.status(400).json({ error: 'Invalid theme' });
     await upsertSetting('footer_theme', theme);
     res.json({ success: true });
