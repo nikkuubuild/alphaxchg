@@ -13,8 +13,14 @@ body[data-theme="ocean-blue"]{--ac:59,130,246;--ac-hex:#3B82F6;--ac-dark:#2563EB
 body[data-theme="sunset-fire"]{--ac:249,115,22;--ac-hex:#F97316;--ac-dark:#EA580C}
 body[data-theme="gold-premium"]{--ac:234,179,8;--ac-hex:#EAB308;--ac-dark:#CA8A04}
 body[data-theme="royal-purple"]{--ac:147,130,220;--ac-hex:#9382DC;--ac-dark:#7C6BC4;background:#1a0e2e;color:#f0edf7}
+body[data-theme="facebook-blue"]{--ac:24,119,242;--ac-hex:#1877F2;--ac-dark:#0866FF;background:#080e1a;color:#e4e6eb}
+body[data-theme="slice-indigo"]{--ac:108,44,221;--ac-hex:#6C2CDD;--ac-dark:#4c1db0;background:#0b051a;color:#f0edf7}
 body[data-theme="royal-purple"]::before{background:radial-gradient(ellipse 80% 60% at 50% -20%,rgba(147,130,220,0.12),transparent),radial-gradient(ellipse 60% 40% at 80% 100%,rgba(107,79,187,0.08),transparent)}
+body[data-theme="facebook-blue"]::before{background:radial-gradient(ellipse 80% 60% at 50% -20%,rgba(24,119,242,0.12),transparent),radial-gradient(ellipse 60% 40% at 80% 100%,rgba(8,102,255,0.08),transparent)}
+body[data-theme="slice-indigo"]::before{background:radial-gradient(ellipse 80% 60% at 50% -20%,rgba(108,44,221,0.12),transparent),radial-gradient(ellipse 60% 40% at 80% 100%,rgba(76,29,176,0.08),transparent)}
 body[data-theme="royal-purple"]::after{background:linear-gradient(0deg,rgba(147,130,220,0.04) 0%,transparent 15%),linear-gradient(180deg,rgba(147,130,220,0.04) 0%,transparent 15%),linear-gradient(90deg,rgba(147,130,220,0.05) 0%,transparent 20%),linear-gradient(270deg,rgba(147,130,220,0.05) 0%,transparent 20%);box-shadow:inset 0 0 120px rgba(147,130,220,0.04),inset 0 0 60px rgba(147,130,220,0.03)}
+body[data-theme="facebook-blue"]::after{background:linear-gradient(0deg,rgba(24,119,242,0.04) 0%,transparent 15%),linear-gradient(180deg,rgba(24,119,242,0.04) 0%,transparent 15%),linear-gradient(90deg,rgba(24,119,242,0.05) 0%,transparent 20%),linear-gradient(270deg,rgba(24,119,242,0.05) 0%,transparent 20%);box-shadow:inset 0 0 120px rgba(24,119,242,0.04),inset 0 0 60px rgba(24,119,242,0.03)}
+body[data-theme="slice-indigo"]::after{background:linear-gradient(0deg,rgba(108,44,221,0.04) 0%,transparent 15%),linear-gradient(180deg,rgba(108,44,221,0.04) 0%,transparent 15%),linear-gradient(90deg,rgba(108,44,221,0.05) 0%,transparent 20%),linear-gradient(270deg,rgba(108,44,221,0.05) 0%,transparent 20%);box-shadow:inset 0 0 120px rgba(108,44,221,0.04),inset 0 0 60px rgba(108,44,221,0.03)}
 body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 60% at 50% -20%,rgba(var(--ac),0.06),transparent);pointer-events:none;z-index:0}
 body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:linear-gradient(0deg,rgba(255,255,255,0.03) 0%,transparent 15%),linear-gradient(180deg,rgba(255,255,255,0.03) 0%,transparent 15%),linear-gradient(90deg,rgba(255,255,255,0.04) 0%,transparent 20%),linear-gradient(270deg,rgba(255,255,255,0.04) 0%,transparent 20%);box-shadow:inset 0 0 120px rgba(255,255,255,0.03),inset 0 0 60px rgba(255,255,255,0.02)}
 .page{width:100%;max-width:460px;margin:0 auto;padding:0 16px 24px;position:relative;z-index:1}
@@ -238,6 +244,48 @@ body[data-theme="royal-purple"] .wa-btn{background:rgba(147,130,220,0.04);border
 body[data-theme="royal-purple"] .wa-btn:hover{border-color:rgba(147,130,220,0.25);box-shadow:0 8px 25px rgba(107,79,187,0.15)}
 body[data-theme="royal-purple"] .footer-item{background:rgba(147,130,220,0.05);border-color:rgba(147,130,220,0.08)}
 body[data-theme="royal-purple"] .footer-item:hover{background:rgba(147,130,220,0.1);border-color:rgba(147,130,220,0.25)}
+
+/* ═══ Facebook Blue Theme — deep navy background ═══ */
+body[data-theme="facebook-blue"] .marquee-wrap{background:linear-gradient(135deg,rgba(10,20,40,0.95),rgba(5,10,25,0.95))}
+body[data-theme="facebook-blue"] .marquee-wrap::before{background:linear-gradient(90deg,rgba(5,10,25,0.95),transparent)}
+body[data-theme="facebook-blue"] .marquee-wrap::after{background:linear-gradient(270deg,rgba(5,10,25,0.95),transparent)}
+body[data-theme="facebook-blue"] .tabs-card{background:linear-gradient(135deg,rgba(10,20,40,0.95),rgba(5,10,25,0.95))}
+body[data-theme="facebook-blue"] .slider-container{background:#080e1a}
+body[data-theme="facebook-blue"] .payment-wrap{background:linear-gradient(135deg,rgba(10,20,40,0.95),rgba(5,10,25,0.95))}
+body[data-theme="facebook-blue"] .payment-wrap::before{background:linear-gradient(90deg,rgba(5,10,25,0.95),transparent)}
+body[data-theme="facebook-blue"] .payment-wrap::after{background:linear-gradient(270deg,rgba(5,10,25,0.95),transparent)}
+body[data-theme="facebook-blue"] .payment-label{background:#080e1a}
+body[data-theme="facebook-blue"] .services-container{background:linear-gradient(135deg,rgba(10,20,40,0.95),rgba(5,10,25,0.95))}
+body[data-theme="facebook-blue"] .services-card{background:linear-gradient(160deg,rgba(20,35,65,0.95),rgba(10,20,45,0.95))}
+body[data-theme="facebook-blue"] .footer{background:linear-gradient(135deg,rgba(10,20,40,0.95),rgba(5,10,25,0.95))}
+body[data-theme="facebook-blue"] .status-bar{background:rgba(24,119,242,0.06);border-color:rgba(24,119,242,0.15)}
+body[data-theme="facebook-blue"] .section-badge{background:rgba(24,119,242,0.06);border-color:rgba(24,119,242,0.1);color:rgba(220,230,255,0.3)}
+body[data-theme="facebook-blue"] .section-count{background:rgba(24,119,242,0.06);border-color:rgba(24,119,242,0.1)}
+body[data-theme="facebook-blue"] .wa-btn{background:rgba(24,119,242,0.04);border-color:rgba(24,119,242,0.1)}
+body[data-theme="facebook-blue"] .wa-btn:hover{border-color:rgba(24,119,242,0.25);box-shadow:0 8px 25px rgba(24,119,242,0.15)}
+body[data-theme="facebook-blue"] .footer-item{background:rgba(24,119,242,0.05);border-color:rgba(24,119,242,0.08)}
+body[data-theme="facebook-blue"] .footer-item:hover{background:rgba(24,119,242,0.1);border-color:rgba(24,119,242,0.25)}
+
+/* ═══ Slice Indigo Theme — midnight violet background ═══ */
+body[data-theme="slice-indigo"] .marquee-wrap{background:linear-gradient(135deg,rgba(25,10,50,0.95),rgba(15,5,35,0.95))}
+body[data-theme="slice-indigo"] .marquee-wrap::before{background:linear-gradient(90deg,rgba(15,5,35,0.95),transparent)}
+body[data-theme="slice-indigo"] .marquee-wrap::after{background:linear-gradient(270deg,rgba(15,5,35,0.95),transparent)}
+body[data-theme="slice-indigo"] .tabs-card{background:linear-gradient(135deg,rgba(25,10,50,0.95),rgba(15,5,35,0.95))}
+body[data-theme="slice-indigo"] .slider-container{background:#0b051a}
+body[data-theme="slice-indigo"] .payment-wrap{background:linear-gradient(135deg,rgba(25,10,50,0.95),rgba(15,5,35,0.95))}
+body[data-theme="slice-indigo"] .payment-wrap::before{background:linear-gradient(90deg,rgba(15,5,35,0.95),transparent)}
+body[data-theme="slice-indigo"] .payment-wrap::after{background:linear-gradient(270deg,rgba(15,5,35,0.95),transparent)}
+body[data-theme="slice-indigo"] .payment-label{background:#0b051a}
+body[data-theme="slice-indigo"] .services-container{background:linear-gradient(135deg,rgba(25,10,50,0.95),rgba(15,5,35,0.95))}
+body[data-theme="slice-indigo"] .services-card{background:linear-gradient(160deg,rgba(35,15,70,0.95),rgba(20,8,45,0.95))}
+body[data-theme="slice-indigo"] .footer{background:linear-gradient(135deg,rgba(25,10,50,0.95),rgba(15,5,35,0.95))}
+body[data-theme="slice-indigo"] .status-bar{background:rgba(108,44,221,0.06);border-color:rgba(108,44,221,0.15)}
+body[data-theme="slice-indigo"] .section-badge{background:rgba(108,44,221,0.06);border-color:rgba(108,44,221,0.1);color:rgba(230,220,255,0.3)}
+body[data-theme="slice-indigo"] .section-count{background:rgba(108,44,221,0.06);border-color:rgba(108,44,221,0.1)}
+body[data-theme="slice-indigo"] .wa-btn{background:rgba(108,44,221,0.04);border-color:rgba(108,44,221,0.1)}
+body[data-theme="slice-indigo"] .wa-btn:hover{border-color:rgba(108,44,221,0.25);box-shadow:0 8px 25px rgba(108,44,221,0.15)}
+body[data-theme="slice-indigo"] .footer-item{background:rgba(108,44,221,0.05);border-color:rgba(108,44,221,0.08)}
+body[data-theme="slice-indigo"] .footer-item:hover{background:rgba(108,44,221,0.1);border-color:rgba(108,44,221,0.25)}
 body[data-theme] .footer-bottom p span{color:rgba(var(--ac),0.8)}
 
 /* ── Modal ── */
@@ -268,7 +316,7 @@ body[data-theme] .footer-bottom p span{color:rgba(var(--ac),0.8)}
   <!-- ═══════ HEADER ═══════ -->
   <div class="header">
     <a class="logo" href="#">
-      <div class="logo-icon">A</div>
+      <!-- <div class="logo-icon">A</div> -->
       <div class="logo-text">Alpha<span>Xchng</span></div>
     </a>
     <button class="get-btn" onclick="openWA()">Get IDs</button>
