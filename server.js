@@ -307,6 +307,17 @@ app.get('/api/check-auth', authMiddleware, (req, res) => res.json({ authenticate
 //  PUBLIC API
 // ═══════════════════════════════════════════════════════════════════
 
+app.put('/api/admin/site-logo', authMiddleware, upload.single('logo'), async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+    const filename = `logo-${Date.now()}${path.extname(req.file.originalname)}`;
+    await run('INSERT INTO file_uploads (filename, data, content_type) VALUES (?, ?, ?)',
+      [filename, req.file.buffer, req.file.mimetype]);
+    await upsertSetting('site_logo', filename);
+    res.json({ success: true, filename });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
 app.get('/api/public/all', async (req, res) => {
   try {
     const data = {};
@@ -341,6 +352,9 @@ app.get('/api/public/all', async (req, res) => {
     data.marqueeSpeed = marqueeSpeed ? parseInt(marqueeSpeed.value) : 30;
     data.sliderSpeed = sliderSpeed ? parseInt(sliderSpeed.value) : 20;
     data.verticalSpeed = verticalSpeed ? parseInt(verticalSpeed.value) : 18;
+
+    const siteLogo = await getOne("SELECT value FROM settings WHERE key = 'site_logo'");
+    data.siteLogo = siteLogo ? '/uploads/' + siteLogo.value : '/image/logo.jpg';
 
     res.json(data);
   } catch (e) { res.status(500).json({ error: e.message }); }

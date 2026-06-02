@@ -724,6 +724,19 @@ async function renderFooter() {
       { id: 'alpha-premium', label: 'Alpha Premium', color: '#e5b842', bg: 'rgba(229,184,66,0.12)' }
     ];
     el.innerHTML =
+      '<div class="section-header"><h3>Site Logo</h3></div>' +
+      '<div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);padding:24px;border-radius:14px;margin-bottom:32px;display:flex;align-items:center;gap:24px">' +
+        '<div id="logoAdminPreview" style="background:rgba(0,0,0,0.3);padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04)">' +
+          '<img src="/image/logo.jpg" style="max-height:60px;display:block" onerror="this.src=\'https://via.placeholder.com/150x60?text=No+Logo\'">' +
+        '</div>' +
+        '<div style="flex:1">' +
+          '<div style="font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:12px">Upload a high-quality logo (transparent PNG recommended)</div>' +
+          '<div class="file-upload" style="width:fit-content">' +
+            '<input type="file" id="logoInput" onchange="uploadSiteLogo()" accept="image/*">' +
+            '<div class="file-label">📁 Choose New Logo</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
       '<div class="section-header"><h3>Site Theme</h3></div>' +
       '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px">' +
       themes.map(t =>
@@ -824,6 +837,28 @@ async function deleteFooterLink(id) {
 // ═════════════════════════════════════════════════════════════════════
 //  FOOTER THEME
 // ═════════════════════════════════════════════════════════════════════
+
+async function uploadSiteLogo() {
+  const input = document.getElementById('logoInput');
+  if (!input.files[0]) return;
+  const formData = new FormData();
+  formData.append('logo', input.files[0]);
+  try {
+    const r = await fetch(API + '/api/admin/site-logo', {
+      method: 'PUT',
+      headers: { 'Authorization': 'Bearer ' + token },
+      body: formData
+    });
+    if (r.ok) {
+      toast('Site logo updated', 'success');
+      renderFooter();
+    } else {
+      toast('Upload failed', 'error');
+    }
+  } catch (e) {
+    toast('Error uploading logo', 'error');
+  }
+}
 
 async function setFooterTheme(theme) {
   await api('/api/admin/footer-theme', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ theme }) });
