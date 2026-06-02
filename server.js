@@ -182,11 +182,12 @@ async function ensureInit() {
     }
 
     // WhatsApp numbers
+    const waSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>`; // Placeholder for actual SVG
     const nums = [
-      ['8651381149', '🎯', 'GET ID 1', 'Primary support line', 'HOT', 0],
-      ['7542943418', '⚡', 'GET ID 2', 'Fast track - 2min delivery', 'FAST', 1],
-      ['8235817872', '🔄', 'GET ID 3', 'Additional agents online', 'READY', 2],
-      ['9472194303', '🛟', 'HELP & SUPPORT', 'General enquiries', '24/7', 3]
+      ['8651381149', waSvg, 'GET ID 1', 'Primary support line', 'HOT', 0],
+      ['7542943418', waSvg, 'GET ID 2', 'Fast track - 2min delivery', 'FAST', 1],
+      ['8235817872', waSvg, 'GET ID 3', 'Additional agents online', 'READY', 2],
+      ['9472194303', waSvg, 'HELP & SUPPORT', 'General enquiries', '24/7', 3]
     ];
     for (const n of nums) {
       await run('INSERT INTO whatsapp_numbers (number, icon, title, description, badge, sort_order) VALUES (?, ?, ?, ?, ?, ?)', n);
@@ -201,13 +202,21 @@ async function ensureInit() {
       ['💬', 'linear-gradient(135deg,rgba(139,195,74,0.12),rgba(139,195,74,0.04))', 'Emergency Support', 'Tap to chat on WhatsApp', 'https://wa.me/919999999999', 1, 2]);
 
     // Services
+    const svcIcons = {
+      available: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
+      bonus: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 15 2 2 4-4"/><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M12 8v4"/></svg>`,
+      deposit: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="m17 5-5-3-5 3"/><path d="m17 19-5 3-5-3"/></svg>`,
+      unlimited: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>`,
+      safe: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
+      instant: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m13 2-2 10h3L11 22"/></svg>`
+    };
     const services = [
-      ['24x7 Available', 'Round-the-clock support for all your needs', '🕐', 0],
-      ['7% Bonus on Every New Deposits', 'Get instant bonus on your first deposit', '💰', 1],
-      ['Minimum Deposit Amount ₹100', 'Start trading with just ₹100', '📊', 2],
-      ['Maximum Deposit Unlimited', '100% safe funds with no deposit limits', '🔓', 3],
-      ['100% Safe Funds', 'Military-grade encryption for all transactions', '🔒', 4],
-      ['Instant Withdrawals', 'Quick and hassle-free withdrawal process', '⚡', 5]
+      ['24x7 Available', 'Round-the-clock support for all your needs', svcIcons.available, 0],
+      ['7% Bonus on Every New Deposits', 'Get instant bonus on your first deposit', svcIcons.bonus, 1],
+      ['Minimum Deposit Amount ₹100', 'Start trading with just ₹100', svcIcons.deposit, 2],
+      ['Maximum Deposit Unlimited', '100% safe funds with no deposit limits', svcIcons.unlimited, 3],
+      ['100% Safe Funds', 'Military-grade encryption for all transactions', svcIcons.safe, 4],
+      ['Instant Withdrawals', 'Quick and hassle-free withdrawal process', svcIcons.instant, 5]
     ];
     for (const s of services) {
       await run('INSERT INTO services (title, description, icon, sort_order) VALUES (?, ?, ?, ?)', s);
